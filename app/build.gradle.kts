@@ -2,26 +2,28 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.kapt)
-
 }
-
+apply("../manifest.gradle.kts")
 android {
     namespace = "fan.akua.exam"
-    compileSdk = 34
+    compileSdk = extra["targetSdk"] as Int
 
     defaultConfig {
-        applicationId = "fan.akua.exam"
-        minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        applicationId =  "fan.akua.exam"
+        minSdk = extra["minSdk"] as Int
+        targetSdk = extra["targetSdk"] as Int
+        versionCode = extra["versionCode"] as Int
+        versionName = extra["versionName"] as String
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
+            isProfileable = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -38,6 +40,7 @@ android {
     buildFeatures {
         dataBinding = true
         viewBinding = true
+        buildConfig = true
     }
 }
 
