@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-}
+    alias(libs.plugins.jetbrains.kotlin.kapt)
 
+}
 
 android {
     namespace = "fan.akua.exam"
@@ -41,7 +42,13 @@ android {
 }
 
 dependencies {
-    implementation (libs.brv)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.lottie)
+    implementation(libs.refresh.layout.kernel)
+    implementation(libs.refresh.header.radar)
+    implementation(libs.glide)
+    implementation(libs.banner)
+    implementation(libs.brv)
     implementation(libs.spannable)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.fragment.ktx)

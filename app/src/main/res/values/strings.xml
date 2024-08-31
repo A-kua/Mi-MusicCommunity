@@ -4,4 +4,10 @@
     <string name="str_disagree">不同意</string>
     <string name="str_agree">同意并使用</string>
     <string name="str_term">声明与条款</string>
+    <string name="str_daily_recommend">每日推荐</string>
+    <string name="str_hot_rank">热门金曲</string>
+    <string name="str_exclusive_song">专属好歌</string>
+    <string name="str_hint">一直很安静</string>
+    <string name="str_no_data">没有数据可显示</string>
+    <string name="str_loading">数据加载中</string>
 </resources>
