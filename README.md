@@ -21,3 +21,12 @@
     <br>
 </div>
 
+### 运行效果如下
+
+演示过程中网络较差，因此图片加载速度较为缓慢。
+
+[视频无法播放请点击我](vx_images/Screen_recording_20240829_145500.mp4)
+
+<div>
+    <video src="vx_images/Screen_recording_20240829_145500.mp4"></video>
+</div>
