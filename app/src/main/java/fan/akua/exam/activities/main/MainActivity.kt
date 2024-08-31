@@ -65,8 +65,24 @@ class MainActivity : AppCompatActivity() {
                     RequestState.SUCCESS -> {
                         val toRVModels = uiState.toRVModels()
 
-                        // todo: 这里需要diffUtils
-                        binding.rv.models = toRVModels
+                        // kotlin的判空真是奇葩！
+                        if (binding.rv.models != null) {
+                            val diffUtilCallback = GenericDiffUtil(
+                                oldList = binding.rv.models as List<BaseModel>,
+                                newList = toRVModels as List<BaseModel>,
+                                areItemsTheSame = { oldItem, newItem -> oldItem.modelID == newItem.modelID },
+                                areContentsTheSame = { oldItem, newItem ->
+                                    oldItem.data.areListsEqual(newItem.data) { a, b ->
+                                        a == b
+                                    }
+                                }
+                            )
+                            val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
+                            binding.rv.bindingAdapter.models = toRVModels
+                            diffResult.dispatchUpdatesTo(binding.rv.bindingAdapter)
+                        }else{
+                            binding.rv.bindingAdapter.models = toRVModels
+                        }
 
                         if (binding.swipe.isRefreshing) {
                             binding.swipe.finishRefresh()
