@@ -15,5 +15,10 @@ class App : Application() {
         val mmkvPath = MMKV.initialize(this)
         if (BuildConfig.DEBUG)
             "MMkv".logD(mmkvPath)
+        StateConfig.apply {
+            emptyLayout = R.layout.layout_empty
+            errorLayout = R.layout.layout_error
+            loadingLayout = R.layout.layout_loading
+        }
     }
 }

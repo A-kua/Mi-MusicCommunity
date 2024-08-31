@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.scwang.smart.refresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.drake.statelayout.StateLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipe"
+    android:id="@+id/state"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    tools:context=".activities.main.MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv"
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/swipe"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</com.scwang.smart.refresh.layout.SmartRefreshLayout>
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+</com.drake.statelayout.StateLayout>
+
 
 
 

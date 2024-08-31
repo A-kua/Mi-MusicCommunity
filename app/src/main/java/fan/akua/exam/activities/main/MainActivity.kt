@@ -89,6 +89,7 @@ class MainActivity : AppCompatActivity() {
                         if (binding.swipe.isLoading) {
                             binding.swipe.finishLoadMore()
                         }
+                        binding.state.showContent()
                     }
 
                     RequestState.ERROR -> {
@@ -98,6 +99,7 @@ class MainActivity : AppCompatActivity() {
                         if (binding.swipe.isLoading) {
                             binding.swipe.finishLoadMore()
                         }
+                        binding.state.showError()
                     }
 
                     RequestState.LOADING -> {
