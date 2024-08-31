@@ -1,0 +1,47 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_terms_background"
+    android:orientation="vertical"
+    android:paddingBottom="0dp">
+
+    <TextView
+        android:id="@+id/titleTextView"
+        style="@style/DialogTitleStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:text="@string/str_term" />
+
+    <TextView
+        android:id="@+id/contentTextView"
+        style="@style/DialogContentStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="22dp"
+        android:paddingTop="9dp"
+        android:paddingEnd="22dp"
+        tools:text="欢迎使用音乐社区，我们将严格遵守相关法律和隐私政策保护您的个人隐私，请您阅读并同意《用户协议》与《隐私政策》。" />
+
+    <TextView
+        android:id="@+id/disagreeTextView"
+        style="@style/DialogNegativeStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="11dp"
+        android:text="@string/str_disagree" />
+
+    <TextView
+        android:id="@+id/agreeTextView"
+        style="@style/DialogPositiveStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#3482FF"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="@string/str_agree" />
+</LinearLayout>

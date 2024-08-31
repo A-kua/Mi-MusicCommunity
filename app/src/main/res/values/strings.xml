@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">音乐社区</string>
+    <string name="sub_title">听你想听</string>
+    <string name="str_disagree">不同意</string>
+    <string name="str_agree">同意并使用</string>
+    <string name="str_term">声明与条款</string>
+</resources>
