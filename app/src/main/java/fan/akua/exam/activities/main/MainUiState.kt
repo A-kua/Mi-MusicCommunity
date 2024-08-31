@@ -27,7 +27,7 @@ enum class RequestState {
  */
 fun MainUiState.toRVModels(): List<ItemBind> {
     return listOf(
-        BannerModel(data = banner)
+        BannerModel(data = banner, 0x114514)
     ) + items.map {
         when (it.style) {
             2 -> LargeCard(it.moduleConfigId, it.musicInfoList)

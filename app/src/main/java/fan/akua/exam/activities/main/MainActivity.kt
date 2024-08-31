@@ -20,6 +20,7 @@ import fan.akua.exam.activities.main.model.BaseModel
 import fan.akua.exam.activities.main.model.GirdModel
 import fan.akua.exam.activities.main.model.HeaderModel
 import fan.akua.exam.activities.main.model.LargeCard
+import fan.akua.exam.data.MusicInfo
 
 import fan.akua.exam.databinding.ActivityMainBinding
 import fan.akua.exam.utils.GenericDiffUtil
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             addType<GirdModel>(R.layout.item_type_gird)
         }
         binding.rv.bindingAdapter.setAnimation(AnimationType.SLIDE_BOTTOM)
-        binding.rv.bindingAdapter.addHeader(HeaderModel(), animation = false)
+        binding.rv.bindingAdapter.addHeader(HeaderModel(0x415411, emptyList()), animation = false)
 
         binding.swipe.setRefreshFooter(ClassicsFooter(this))
         binding.swipe.setRefreshHeader(BezierRadarHeader(this))
@@ -62,18 +63,10 @@ class MainActivity : AppCompatActivity() {
                 "MainActivity".logD("data update: ${uiState.state}")
                 when (uiState.state) {
                     RequestState.SUCCESS -> {
-                        val diffUtilCallback = GenericDiffUtil(
-                            oldList = binding.rv.models as List<BaseModel>,
-                            newList = uiState.toRVModels() as List<BaseModel>,
-                            areItemsTheSame = { oldItem, newItem -> oldItem.modelID == newItem.modelID },
-                            areContentsTheSame = { oldItem, newItem ->
-                                oldItem.data.areListsEqual(newItem.data) { a, b -> a.id == b.id }
-                            }
-                        )
-                        val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
+                        val toRVModels = uiState.toRVModels()
 
-                        binding.rv.models = uiState.toRVModels()
-                        diffResult.dispatchUpdatesTo(binding.rv.bindingAdapter)
+                        // todo: 这里需要diffUtils
+                        binding.rv.models = toRVModels
 
                         if (binding.swipe.isRefreshing) {
                             binding.swipe.finishRefresh()
