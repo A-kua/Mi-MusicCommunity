@@ -15,7 +15,8 @@ import fan.akua.exam.databinding.ItemGirdBinding
 import fan.akua.exam.databinding.ItemTypeGirdBinding
 import fan.akua.exam.utils.dp
 
-class GirdModel(val data: List<MusicInfo>, val rowCount: Int) : ItemBind {
+class GirdModel(override val modelID: Int,override val data: List<MusicInfo>, val rowCount: Int) :
+    BaseModel {
     override fun onBind(vh: BindingAdapter.BindingViewHolder) {
         val binding = ItemTypeGirdBinding.bind(vh.itemView)
         binding.title.text = if (rowCount == 1)

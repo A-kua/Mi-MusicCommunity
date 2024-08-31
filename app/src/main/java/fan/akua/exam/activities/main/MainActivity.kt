@@ -1,27 +1,30 @@
 package fan.akua.exam.activities.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.drake.brv.PageRefreshLayout
+import androidx.recyclerview.widget.DiffUtil
 import com.drake.brv.annotaion.AnimationType
-import com.drake.brv.utils.BRV
+import com.drake.brv.item.ItemBind
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.linear
 import com.drake.brv.utils.models
 import com.drake.brv.utils.setup
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.BezierRadarHeader
-import fan.akua.exam.BR
 import fan.akua.exam.R
 import fan.akua.exam.activities.main.model.BannerModel
+import fan.akua.exam.activities.main.model.BaseModel
 import fan.akua.exam.activities.main.model.GirdModel
+import fan.akua.exam.activities.main.model.HeaderModel
 import fan.akua.exam.activities.main.model.LargeCard
 
 import fan.akua.exam.databinding.ActivityMainBinding
+import fan.akua.exam.utils.GenericDiffUtil
+import fan.akua.exam.utils.areListsEqual
+import fan.akua.exam.utils.logD
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -35,11 +38,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.rv.linear().setup {
+            addType<HeaderModel>(R.layout.item_type_header)
             addType<BannerModel>(R.layout.item_type_banner)
             addType<LargeCard>(R.layout.item_type_largecard)
             addType<GirdModel>(R.layout.item_type_gird)
         }
         binding.rv.bindingAdapter.setAnimation(AnimationType.SLIDE_BOTTOM)
+        binding.rv.bindingAdapter.addHeader(HeaderModel(), animation = false)
 
         binding.swipe.setRefreshFooter(ClassicsFooter(this))
         binding.swipe.setRefreshHeader(BezierRadarHeader(this))
@@ -54,17 +59,37 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             viewModel.uiState.collect { uiState ->
-                Log.e("simon", "collect ${uiState.state}")
+                "MainActivity".logD("data update: ${uiState.state}")
                 when (uiState.state) {
                     RequestState.SUCCESS -> {
+                        val diffUtilCallback = GenericDiffUtil(
+                            oldList = binding.rv.models as List<BaseModel>,
+                            newList = uiState.toRVModels() as List<BaseModel>,
+                            areItemsTheSame = { oldItem, newItem -> oldItem.modelID == newItem.modelID },
+                            areContentsTheSame = { oldItem, newItem ->
+                                oldItem.data.areListsEqual(newItem.data) { a, b -> a.id == b.id }
+                            }
+                        )
+                        val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
+
                         binding.rv.models = uiState.toRVModels()
-                        binding.swipe.finishRefresh()
-                        binding.swipe.finishLoadMore();
+                        diffResult.dispatchUpdatesTo(binding.rv.bindingAdapter)
+
+                        if (binding.swipe.isRefreshing) {
+                            binding.swipe.finishRefresh()
+                        }
+                        if (binding.swipe.isLoading) {
+                            binding.swipe.finishLoadMore()
+                        }
                     }
 
                     RequestState.ERROR -> {
-                        binding.swipe.finishRefresh()
-                        binding.swipe.finishLoadMore();
+                        if (binding.swipe.isRefreshing) {
+                            binding.swipe.finishRefresh()
+                        }
+                        if (binding.swipe.isLoading) {
+                            binding.swipe.finishLoadMore()
+                        }
                     }
 
                     RequestState.LOADING -> {
@@ -76,6 +101,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     RequestState.All -> {
+                        binding.swipe.setEnableRefresh(true)
                         binding.swipe.setEnableLoadMore(false)
                     }
                 }

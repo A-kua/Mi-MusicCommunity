@@ -1,48 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.scwang.smart.refresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/search_edit_frame"
-            style="@style/SearchStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:autofillHints="no"
-            android:background="@drawable/bg_search"
-            android:drawableStart="@drawable/ic_search"
-            android:hint="@string/str_hint"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:padding="12dp"
-            android:singleLine="true"
-            android:textSize="16sp"
-            tools:ignore="LabelFor,RtlHardcoded" />
-
-        <com.scwang.smart.refresh.layout.SmartRefreshLayout
-            android:id="@+id/swipe"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+        android:layout_height="match_parent" />
+</com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
 
-    </LinearLayout>
-
-</androidx.core.widget.NestedScrollView>
 
 
 

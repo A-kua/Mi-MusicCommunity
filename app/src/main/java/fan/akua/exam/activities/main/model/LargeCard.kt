@@ -18,7 +18,7 @@ import fan.akua.exam.databinding.ItemTypeLargecardBinding
 import fan.akua.exam.utils.dp
 
 
-class LargeCard(val data: List<MusicInfo>) : ItemBind {
+class LargeCard(override val modelID: Int,override val data: List<MusicInfo>) : BaseModel {
     override fun onBind(vh: BindingAdapter.BindingViewHolder) {
         val binding = ItemTypeLargecardBinding.bind(vh.itemView)
         binding.title.text = vh.context.resources.getString(R.string.str_exclusive_song)

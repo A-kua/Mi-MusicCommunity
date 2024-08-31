@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import fan.akua.exam.api.MusicService
 import fan.akua.exam.data.filterBannerMusicInfo
+import fan.akua.exam.utils.logD
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,16 +22,32 @@ class MainViewModel : ViewModel() {
     private var totalPages = 1
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
+    private fun postLoadedAll() {
+        _uiState.value = _uiState.value.copy(
+            state = RequestState.All
+        )
+        "MainViewModel".logD("no more data")
+    }
+
+    private fun postLoadError(msg: String) {
+        _uiState.value = _uiState.value.copy(
+            state = RequestState.ERROR
+        )
+        "MainViewModel".logD(msg)
+    }
+
     fun loadNextPage() {
-        Log.e("simon", "loadNext")
+        "MainViewModel".logD("loadNextPage")
         viewModelScope.launch {
-            if (currentPage <= totalPages) {
+            if (currentPage >= totalPages) {
+                postLoadedAll()
+            } else {
                 _uiState.value = _uiState.value.copy(state = RequestState.LOADING)
                 try {
                     val response = apiService.getHomePage(current = currentPage + 1)
                     if (response.code == 200) {
-                        currentPage++
-                        totalPages = response.data.total
+                        currentPage = response.data.current
+                        totalPages = response.data.pages
                         val data = response.data
                         val (bannerList, otherList) = data.records.filterBannerMusicInfo()
 
@@ -39,29 +56,21 @@ class MainViewModel : ViewModel() {
                             items = (otherList + _uiState.value.items).distinctBy { it.moduleConfigId },
                             state = RequestState.SUCCESS
                         )
-                        Log.e("simon", "update")
+                        if (response.data.current == response.data.pages)
+                            postLoadedAll()
+                        "MainViewModel".logD("update ${response.data.current} : ${response.data.pages}")
                     } else {
-                        _uiState.value = _uiState.value.copy(
-                            state = RequestState.ERROR
-                        )
-                        Log.e("simon", "error")
+                        postLoadError("internal error: ${response.msg}")
                     }
                 } catch (e: Exception) {
-                    _uiState.value = _uiState.value.copy(
-                        state = RequestState.ERROR
-                    )
-                    Log.e("simon", "exce")
+                    postLoadError("get error: $e")
                 }
-            } else {
-                _uiState.value = _uiState.value.copy(
-                    state = RequestState.All
-                )
-                Log.e("simon", "no more")
             }
         }
     }
 
     fun refresh() {
+        "MainViewModel".logD("refresh")
         currentPage = 0
         totalPages = 1
         loadNextPage()

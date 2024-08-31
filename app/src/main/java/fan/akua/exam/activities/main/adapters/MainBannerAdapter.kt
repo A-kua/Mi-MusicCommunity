@@ -13,7 +13,7 @@ import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.databinding.ItemBannerBinding
 
 
-class MainBannerAdapter(val data: List<MusicInfo>) :
+class MainBannerAdapter(var data: List<MusicInfo>) :
     BannerAdapter<MusicInfo, MainBannerAdapter.BannerViewHolder>(data) {
 
     override fun onCreateHolder(parent: ViewGroup, viewType: Int): BannerViewHolder {
