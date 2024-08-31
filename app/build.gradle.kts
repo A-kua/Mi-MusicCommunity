@@ -45,6 +45,7 @@ android {
 }
 
 dependencies {
+    debugImplementation(libs.leakcanary.android)
     implementation(libs.androidx.paging.runtime.ktx)
 
     implementation(libs.androidx.swiperefreshlayout)
