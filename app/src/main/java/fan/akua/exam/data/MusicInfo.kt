@@ -6,5 +6,5 @@ data class MusicInfo(
     val author: String,
     val coverUrl: String,
     val musicUrl: String,
-    val lyricUrl: String
+    val lyricUrl: String,
 )

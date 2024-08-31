@@ -2,36 +2,32 @@ package fan.akua.exam.activities.main.model
 
 import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SnapHelper
 import com.bumptech.glide.Glide
 import com.drake.brv.BindingAdapter
-import com.drake.brv.annotaion.AnimationType
 import com.drake.brv.item.ItemBind
 import com.drake.brv.utils.bindingAdapter
-import com.drake.brv.utils.grid
+import com.drake.brv.utils.linear
 import com.drake.brv.utils.setup
 import fan.akua.exam.R
 import fan.akua.exam.activities.main.AkuaItemAnimation
-import fan.akua.exam.activities.main.adapters.MainBannerAdapter
+import fan.akua.exam.data.HomePageInfo
 import fan.akua.exam.data.MusicInfo
-import fan.akua.exam.databinding.ItemGirdBinding
-import fan.akua.exam.databinding.ItemTypeGirdBinding
+import fan.akua.exam.databinding.ItemLargecardBinding
+import fan.akua.exam.databinding.ItemTypeLargecardBinding
 import fan.akua.exam.utils.GenericDiffUtil
-import fan.akua.exam.utils.dp
 
-class GirdModel(override val modelID: Int, override val data: List<MusicInfo>, val rowCount: Int) :
-    BaseModel,ItemBind {
+class LargeCardModel(val data: HomePageInfo) : ItemBind {
     override fun onBind(vh: BindingAdapter.BindingViewHolder) {
-        val binding = ItemTypeGirdBinding.bind(vh.itemView)
-        binding.title.text = if (rowCount == 1)
-            vh.context.resources.getString(R.string.str_daily_recommend)
-        else
-            vh.context.resources.getString(R.string.str_hot_rank)
-        // Adapter复用优化
+        val binding = ItemTypeLargecardBinding.bind(vh.itemView)
+        binding.title.text = vh.context.resources.getString(R.string.str_exclusive_song)
+        // 数据复用优化
         if (binding.rv.adapter != null) {
             val diffUtilCallback = GenericDiffUtil(
                 oldList = binding.rv.bindingAdapter.models as List<MusicInfo>,
-                newList = data,
+                newList = data.musicInfoList,
                 areItemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
                 areContentsTheSame = { oldItem, newItem ->
                     oldItem.coverUrl == newItem.coverUrl &&
@@ -40,30 +36,29 @@ class GirdModel(override val modelID: Int, override val data: List<MusicInfo>, v
                 }
             )
             val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
-            binding.rv.bindingAdapter.models = data
+            binding.rv.bindingAdapter.models = data.musicInfoList
             diffResult.dispatchUpdatesTo(binding.rv.bindingAdapter)
         } else {
-            binding.rv.grid(spanCount = rowCount).setup {
-                addType<MusicInfo>(R.layout.item_gird)
+            val width = binding.root.context.resources.displayMetrics.widthPixels * 0.8
+            binding.rv.linear(RecyclerView.HORIZONTAL).setup {
+                addType<MusicInfo>(R.layout.item_largecard)
                 onCreate {
-                    if (rowCount == 1) {
-                        val itemGirdBinding = getBinding<ItemGirdBinding>()
-                        val layoutParams = itemGirdBinding.parentCardView.layoutParams
-                        layoutParams.height = 170.dp(itemView.context).toInt()
-                        itemGirdBinding.parentCardView.layoutParams = layoutParams
-                    }
+                    val itemLargeBinding = getBinding<ItemLargecardBinding>()
+                    val layoutParams = itemLargeBinding.parentCardView.layoutParams
+                    layoutParams.width = width.toInt()
+                    itemLargeBinding.parentCardView.layoutParams = layoutParams
                 }
                 onBind {
                     val model = getModel<MusicInfo>()
-                    val itemGirdBinding = getBinding<ItemGirdBinding>()
-                    itemGirdBinding.musicInfo = model
-                    Glide.with(itemGirdBinding.img)
+                    val itemLargeBinding = getBinding<ItemLargecardBinding>()
+                    itemLargeBinding.musicInfo = model
+                    Glide.with(itemLargeBinding.img)
                         .load(model.coverUrl)
-                        .into(itemGirdBinding.img)
-                    itemGirdBinding.root.setOnClickListener {
+                        .into(itemLargeBinding.img)
+                    itemLargeBinding.root.setOnClickListener {
                         Toast.makeText(context, model.musicName, Toast.LENGTH_SHORT).show()
                     }
-                    itemGirdBinding.playButton.setOnClickListener {
+                    itemLargeBinding.playButton.setOnClickListener {
                         Toast.makeText(
                             context,
                             "将${model.musicName}添加到音乐列表",
@@ -71,8 +66,10 @@ class GirdModel(override val modelID: Int, override val data: List<MusicInfo>, v
                         ).show()
                     }
                 }
-            }.models = data
+            }.models = data.musicInfoList
             binding.rv.bindingAdapter.setAnimation(AkuaItemAnimation())
+            val snapHelper: SnapHelper = LinearSnapHelper()
+            snapHelper.attachToRecyclerView(binding.rv)
         }
     }
 }

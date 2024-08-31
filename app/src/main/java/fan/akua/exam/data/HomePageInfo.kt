@@ -7,11 +7,15 @@ data class HomePageInfo(
     val musicInfoList: List<MusicInfo>
 )
 
-fun List<HomePageInfo>.filterBannerMusicInfo(): Pair<List<MusicInfo>, List<HomePageInfo>> {
+fun List<HomePageInfo>.separateBanner(): Pair<List<MusicInfo>, List<HomePageInfo>> {
+    // 所有banner放到一起
     val bannerMusicInfo = filter { it.style == 1 }
-        .flatMap { it.musicInfoList }
+        .flatMap { list ->
+            list.musicInfoList
+        }
 
-    val otherModules = filter { it.style != 1 }
+    val otherModules =
+        filter { it.style != 1 }
 
     return Pair(bannerMusicInfo, otherModules)
 }

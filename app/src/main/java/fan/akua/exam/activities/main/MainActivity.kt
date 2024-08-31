@@ -1,30 +1,31 @@
 package fan.akua.exam.activities.main
 
+import android.graphics.RenderEffect
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DiffUtil
-import com.drake.brv.annotaion.AnimationType
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import com.drake.brv.item.ItemBind
+import com.drake.brv.listener.OnHoverAttachListener
 import com.drake.brv.utils.bindingAdapter
-import com.drake.brv.utils.linear
+import com.drake.brv.utils.grid
 import com.drake.brv.utils.models
 import com.drake.brv.utils.setup
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.BezierRadarHeader
 import fan.akua.exam.R
 import fan.akua.exam.activities.main.model.BannerModel
-import fan.akua.exam.activities.main.model.BaseModel
-import fan.akua.exam.activities.main.model.GirdModel
+import fan.akua.exam.activities.main.model.GridModel
 import fan.akua.exam.activities.main.model.HeaderModel
-import fan.akua.exam.activities.main.model.LargeCard
-import fan.akua.exam.data.MusicInfo
+import fan.akua.exam.activities.main.model.LargeCardModel
+import fan.akua.exam.activities.main.model.TitleModel
 
 import fan.akua.exam.databinding.ActivityMainBinding
-import fan.akua.exam.utils.GenericDiffUtil
-import fan.akua.exam.utils.areListsEqual
 import fan.akua.exam.utils.logD
 import kotlinx.coroutines.launch
 
@@ -38,67 +39,36 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.rv.linear().setup {
-            addType<HeaderModel>(R.layout.item_type_header)
-            addType<BannerModel>(R.layout.item_type_banner)
-            addType<LargeCard>(R.layout.item_type_largecard)
-            addType<GirdModel>(R.layout.item_type_gird)
-        }
-        binding.rv.bindingAdapter.addHeader(HeaderModel(0x415411, emptyList()), animation = false)
+        initialViewState()
+        initialEvent()
 
-        binding.swipe.setRefreshFooter(ClassicsFooter(this))
-        binding.swipe.setRefreshHeader(BezierRadarHeader(this))
-
-        binding.swipe.setOnRefreshListener {
-            viewModel.refresh()
-        }
-
-        binding.swipe.setOnLoadMoreListener {
-            viewModel.loadNextPage()
-        }
+        binding.rv.bindingAdapter.setAnimation(AkuaItemAnimation())
+        binding.rv.bindingAdapter.animationRepeat = true
 
         lifecycleScope.launch {
             viewModel.uiState.collect { uiState ->
                 "MainActivity".logD("data update: ${uiState.state}")
                 when (uiState.state) {
                     RequestState.SUCCESS -> {
-                        val toRVModels = uiState.toRVModels()
-
-                        // kotlin的判空真是奇葩！
+                        val toRVModels = uiState.toRVModels(resources = resources)
                         if (binding.rv.models != null) {
-                            val diffUtilCallback = GenericDiffUtil(
-                                oldList = binding.rv.models as List<BaseModel>,
-                                newList = toRVModels as List<BaseModel>,
-                                areItemsTheSame = { oldItem, newItem -> oldItem.modelID == newItem.modelID },
-                                areContentsTheSame = { oldItem, newItem ->
-                                    oldItem.data.areListsEqual(newItem.data) { a, b ->
-                                        a == b
-                                    }
-                                }
+                            val merge = MainDataMerge.merge(
+                                binding.rv.bindingAdapter.models as List<ItemBind>,
+                                toRVModels
                             )
-                            val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
                             binding.rv.bindingAdapter.models = toRVModels
-                            diffResult.dispatchUpdatesTo(binding.rv.bindingAdapter)
-                        }else{
+
+                            merge.dispatchUpdatesTo(binding.rv.bindingAdapter)
+                        } else {
                             binding.rv.bindingAdapter.models = toRVModels
                         }
 
-                        if (binding.swipe.isRefreshing) {
-                            binding.swipe.finishRefresh()
-                        }
-                        if (binding.swipe.isLoading) {
-                            binding.swipe.finishLoadMore()
-                        }
+                        stopRefreshAndLoad()
                         binding.state.showContent()
                     }
 
                     RequestState.ERROR -> {
-                        if (binding.swipe.isRefreshing) {
-                            binding.swipe.finishRefresh()
-                        }
-                        if (binding.swipe.isLoading) {
-                            binding.swipe.finishLoadMore()
-                        }
+                        stopRefreshAndLoad()
                         binding.state.showError()
                     }
 
@@ -116,6 +86,51 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun stopRefreshAndLoad() {
+        if (binding.swipe.isRefreshing) {
+            binding.swipe.finishRefresh()
+        }
+        if (binding.swipe.isLoading) {
+            binding.swipe.finishLoadMore()
+        }
+    }
+
+    private fun initialViewState() {
+        binding.rv.grid(spanCount = 2).setup {
+            addType<HeaderModel>(R.layout.item_type_header)
+            addType<BannerModel>(R.layout.item_type_banner)
+            addType<LargeCardModel>(R.layout.item_type_largecard)
+            addType<GridModel>(R.layout.item_type_grid)
+            addType<TitleModel>(R.layout.item_type_title)
+        }
+
+        // 为不同类型的Item设置占用的宽度
+        val gridLayoutManager = binding.rv.layoutManager as GridLayoutManager
+        gridLayoutManager.spanSizeLookup = object : SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when (val model = binding.rv.bindingAdapter.getModel<ItemBind>(position)) {
+                    is GridModel -> model.spanCount
+                    else -> 2
+                }
+            }
+        }
+        // 下拉刷新，上拉加载样式
+        binding.swipe.setRefreshFooter(ClassicsFooter(this))
+        binding.swipe.setRefreshHeader(BezierRadarHeader(this))
+        // 添加头部搜索
+        binding.rv.bindingAdapter.addHeader(HeaderModel(), animation = true)
+    }
+
+    private fun initialEvent() {
+        binding.swipe.setOnRefreshListener {
+            viewModel.refresh()
+        }
+
+        binding.swipe.setOnLoadMoreListener {
+            viewModel.loadNextPage()
         }
     }
 }

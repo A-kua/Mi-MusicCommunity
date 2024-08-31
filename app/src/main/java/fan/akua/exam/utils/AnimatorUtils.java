@@ -1,8 +1,12 @@
 package fan.akua.exam.utils;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
+import android.util.Log;
 import android.util.Property;
 import android.view.View;
 
@@ -18,69 +22,64 @@ public class AnimatorUtils {
         return (float) ((View) paramView.getParent()).getWidth() / 2 + paramView.getWidth() / 2.0F - f;
     }
 
-    public static void introAnimate(View targetLayout, float translationDis, int duration) {
+
+    public static void gptIntroAnimate(View targetLayout, float translationDis, int duration) {
+        targetLayout.clearAnimation();
         targetLayout.setPivotY(getDistanceToCenter(targetLayout));
         targetLayout.setPivotX(getDistanceToCenterX(targetLayout));
         targetLayout.setCameraDistance(10000.0F * targetLayout.getResources().getDisplayMetrics().density);
-        Property<View, Float> localProperty1 = View.TRANSLATION_Y;
-        float[] arrayOfFloat1 = new float[2];
-        arrayOfFloat1[0] = targetLayout.getResources().getDisplayMetrics().heightPixels;
-        arrayOfFloat1[1] = (-translationDis * targetLayout.getResources().getDisplayMetrics().density);
-        ObjectAnimator localObjectAnimator1 = ObjectAnimator.ofFloat(targetLayout, localProperty1, arrayOfFloat1).setDuration(800L);
-        localObjectAnimator1.setInterpolator(new ExpoOut());
-        localObjectAnimator1.setStartDelay(duration + 700);
-        localObjectAnimator1.start();
 
+        // 初始化状态
         targetLayout.setTranslationY(targetLayout.getResources().getDisplayMetrics().heightPixels);
-        Property<View, Float> localProperty2 = View.TRANSLATION_X;
-        float[] arrayOfFloat2 = new float[2];
-        arrayOfFloat2[0] = (-targetLayout.getResources().getDisplayMetrics().widthPixels);
-        arrayOfFloat2[1] = 0.0F;
-        ObjectAnimator localObjectAnimator2 = ObjectAnimator.ofFloat(targetLayout, localProperty2, arrayOfFloat2).setDuration(800L);
-        localObjectAnimator2.setInterpolator(new ExpoOut());
-        localObjectAnimator2.setStartDelay(duration + 700);
-        localObjectAnimator2.start();
-
         targetLayout.setTranslationX(-targetLayout.getResources().getDisplayMetrics().widthPixels);
-        ObjectAnimator localObjectAnimator3 = ObjectAnimator.ofFloat(targetLayout, View.TRANSLATION_Y, 0.0F).setDuration(700L);
-        localObjectAnimator3.setInterpolator(new BackOut());
-        localObjectAnimator3.setStartDelay(1500L);
-        localObjectAnimator3.start();
-
-        ObjectAnimator localObjectAnimator4 = ObjectAnimator.ofFloat(targetLayout, View.ROTATION_X, 60.0F, 0.0F).setDuration(1000L);
-        localObjectAnimator4.setInterpolator(new QuintInOut());
-        localObjectAnimator4.setStartDelay(duration + 1000);
-        localObjectAnimator4.start();
-
         targetLayout.setRotationX(60.0F);
-        Property<View, Float> localProperty3 = View.SCALE_X;
-        float[] arrayOfFloat4 = new float[2];
-        arrayOfFloat4[0] = 0.5F;
-        arrayOfFloat4[1] = targetLayout.getScaleX();
-        ObjectAnimator localObjectAnimator6 = ObjectAnimator.ofFloat(targetLayout, localProperty3, arrayOfFloat4).setDuration(1000L);
-        localObjectAnimator6.setInterpolator(new CircInOut());
-        localObjectAnimator6.setStartDelay(duration + 1000);
-        localObjectAnimator6.start();
-
         targetLayout.setScaleX(0.5F);
-        Property<View, Float> localProperty4 = View.SCALE_Y;
-        float[] arrayOfFloat5 = new float[2];
-        arrayOfFloat5[0] = 0.5F;
-        arrayOfFloat5[1] = targetLayout.getScaleY();
-        ObjectAnimator localObjectAnimator7 = ObjectAnimator.ofFloat(targetLayout, localProperty4, arrayOfFloat5).setDuration(1000L);
-        localObjectAnimator7.setInterpolator(new CircInOut());
-        localObjectAnimator7.setStartDelay(duration + 1000);
-        localObjectAnimator7.start();
-
         targetLayout.setScaleY(0.5F);
-        ObjectAnimator localObjectAnimator8 = ObjectAnimator.ofFloat(targetLayout, View.ROTATION, -50.0F, 0.0F).setDuration(1400L);
-        localObjectAnimator8.setInterpolator(new QuadInOut());
-        localObjectAnimator8.setStartDelay(duration + 300);
-        localObjectAnimator8.start();
 
-        targetLayout.setRotation(-50.0F);
+        ObjectAnimator translateYAnimator = ObjectAnimator.ofFloat(targetLayout, View.TRANSLATION_Y, -translationDis * targetLayout.getResources().getDisplayMetrics().density, 0.0F);
+        translateYAnimator.setDuration(800L);
+        translateYAnimator.setInterpolator(new ExpoOut());
+        translateYAnimator.setStartDelay(duration + 700);
+
+        ObjectAnimator translateXAnimator = ObjectAnimator.ofFloat(targetLayout, View.TRANSLATION_X, -targetLayout.getResources().getDisplayMetrics().widthPixels, 0.0F);
+        translateXAnimator.setDuration(800L);
+        translateXAnimator.setInterpolator(new ExpoOut());
+        translateXAnimator.setStartDelay(duration + 700);
+
+        ObjectAnimator rotationXAnimator = ObjectAnimator.ofFloat(targetLayout, View.ROTATION_X, 60.0F, 0.0F);
+        rotationXAnimator.setDuration(1000L);
+        rotationXAnimator.setInterpolator(new QuintInOut());
+        rotationXAnimator.setStartDelay(duration + 1000);
+
+        ObjectAnimator scaleXAnimator = ObjectAnimator.ofFloat(targetLayout, View.SCALE_X, 0.5F, 1.0F);
+        scaleXAnimator.setDuration(1000L);
+        scaleXAnimator.setInterpolator(new CircInOut());
+        scaleXAnimator.setStartDelay(duration + 1000);
+
+        ObjectAnimator scaleYAnimator = ObjectAnimator.ofFloat(targetLayout, View.SCALE_Y, 0.5F, 1.0F);
+        scaleYAnimator.setDuration(1000L);
+        scaleYAnimator.setInterpolator(new CircInOut());
+        scaleYAnimator.setStartDelay(duration + 1000);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(translateYAnimator, translateXAnimator, rotationXAnimator, scaleXAnimator, scaleYAnimator);
+
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // 确保最终状态
+                targetLayout.setTranslationY(0);
+                targetLayout.setTranslationX(0);
+                targetLayout.setRotationX(0);
+                targetLayout.setScaleX(1.0F);
+                targetLayout.setScaleY(1.0F);
+            }
+        });
+
+        animatorSet.start();
     }
-    public  static class QuadInOut implements TimeInterpolator {
+
+    public static class QuadInOut implements TimeInterpolator {
         public float getInterpolation(float paramFloat) {
             float f1 = paramFloat * 2.0F;
             if (f1 < 1.0F) {

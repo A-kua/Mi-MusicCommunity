@@ -1,10 +1,9 @@
 package fan.akua.exam.activities.main
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import fan.akua.exam.api.MusicService
-import fan.akua.exam.data.filterBannerMusicInfo
+import fan.akua.exam.data.separateBanner
 import fan.akua.exam.utils.logD
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,13 +48,14 @@ class MainViewModel : ViewModel() {
                         currentPage = response.data.current
                         totalPages = response.data.pages
                         val data = response.data
-                        val (bannerList, otherList) = data.records.filterBannerMusicInfo()
+                        val (bannerList, otherItemList) = data.records.separateBanner()
 
                         _uiState.value = MainUiState(
-                            banner = (bannerList + _uiState.value.banner).distinctBy { it.id },
-                            items = (otherList + _uiState.value.items).distinctBy { it.moduleConfigId },
+                            banner = (_uiState.value.banner + bannerList).distinctBy { it.id },
+                            items = (_uiState.value.items + otherItemList).distinctBy { it.moduleConfigId },
                             state = RequestState.SUCCESS
                         )
+
                         if (response.data.current == response.data.pages)
                             postLoadedAll()
                         "MainViewModel".logD("update ${response.data.current} : ${response.data.pages}")

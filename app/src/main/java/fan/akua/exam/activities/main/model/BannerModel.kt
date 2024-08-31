@@ -9,8 +9,7 @@ import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.databinding.ItemTypeBannerBinding
 import fan.akua.exam.utils.GenericDiffUtil
 
-class BannerModel(override val data: List<MusicInfo>, override val modelID: Int) : BaseModel,
-    ItemBind {
+class BannerModel(val data: List<MusicInfo>) : ItemBind {
     override fun onBind(vh: BindingAdapter.BindingViewHolder) {
         val binding = ItemTypeBannerBinding.bind(vh.itemView)
         if (binding.bannerView.indicator == null)
@@ -31,5 +30,6 @@ class BannerModel(override val data: List<MusicInfo>, override val modelID: Int)
             adapter.data = data
             diffResult.dispatchUpdatesTo(adapter)
         }
+
     }
 }
