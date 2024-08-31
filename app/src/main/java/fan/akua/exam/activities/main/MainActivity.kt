@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity() {
             addType<LargeCard>(R.layout.item_type_largecard)
             addType<GirdModel>(R.layout.item_type_gird)
         }
-        binding.rv.bindingAdapter.setAnimation(AnimationType.SLIDE_BOTTOM)
         binding.rv.bindingAdapter.addHeader(HeaderModel(0x415411, emptyList()), animation = false)
 
         binding.swipe.setRefreshFooter(ClassicsFooter(this))

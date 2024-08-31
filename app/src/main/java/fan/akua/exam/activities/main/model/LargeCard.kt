@@ -1,5 +1,6 @@
 package fan.akua.exam.activities.main.model
 
+import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -7,12 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.bumptech.glide.Glide
 import com.drake.brv.BindingAdapter
+import com.drake.brv.animation.ItemAnimation
 import com.drake.brv.annotaion.AnimationType
 import com.drake.brv.item.ItemBind
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.linear
 import com.drake.brv.utils.setup
 import fan.akua.exam.R
+import fan.akua.exam.activities.main.AkuaItemAnimation
 import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.databinding.ItemLargecardBinding
 import fan.akua.exam.databinding.ItemTypeLargecardBinding
@@ -69,7 +72,7 @@ class LargeCard(override val modelID: Int, override val data: List<MusicInfo>) :
                     }
                 }
             }.models = data
-            binding.rv.bindingAdapter.setAnimation(AnimationType.SLIDE_BOTTOM)
+            binding.rv.bindingAdapter.setAnimation(AkuaItemAnimation())
             val snapHelper: SnapHelper = LinearSnapHelper()
             snapHelper.attachToRecyclerView(binding.rv)
         }

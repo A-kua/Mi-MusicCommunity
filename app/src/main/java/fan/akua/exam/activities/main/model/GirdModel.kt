@@ -11,6 +11,7 @@ import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.grid
 import com.drake.brv.utils.setup
 import fan.akua.exam.R
+import fan.akua.exam.activities.main.AkuaItemAnimation
 import fan.akua.exam.activities.main.adapters.MainBannerAdapter
 import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.databinding.ItemGirdBinding
@@ -71,7 +72,7 @@ class GirdModel(override val modelID: Int, override val data: List<MusicInfo>, v
                     }
                 }
             }.models = data
-            binding.rv.bindingAdapter.setAnimation(AnimationType.SLIDE_BOTTOM)
+            binding.rv.bindingAdapter.setAnimation(AkuaItemAnimation())
         }
     }
 }
