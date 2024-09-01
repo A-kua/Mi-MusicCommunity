@@ -45,8 +45,9 @@ android {
 }
 
 dependencies {
-    implementation("com.sothree.slidinguppanel:library:3.4.0")
-    implementation("androidx.palette:palette:1.0.0")
+    implementation (libs.lyricviewx)
+    implementation(libs.library)
+    implementation(libs.androidx.palette)
     debugImplementation(libs.leakcanary.android)
     implementation(libs.androidx.paging.runtime.ktx)
 

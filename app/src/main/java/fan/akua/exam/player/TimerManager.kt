@@ -1,25 +1,25 @@
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
+import android.os.Handler
+import android.os.Looper
 
 class TimerManager(
     private val onUpdate: () -> Unit
-) : CoroutineScope {
-    private var job: Job? = null
+) {
     private var isPaused: Boolean = false
     private var interval: Long = 900L
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + SupervisorJob()
+    private var handler: Handler = Handler(Looper.getMainLooper())
+    private var runnable: Runnable? = null
 
     fun startTimer() {
-        job = launch {
-            while (true) {
+        stopTimer()
+        runnable = object : Runnable {
+            override fun run() {
                 if (!isPaused) {
-                    delay(interval)
                     onUpdate()
+                    handler.postDelayed(this, interval)
                 }
             }
         }
+        handler.post(runnable!!)
     }
 
     fun pauseTimer() {
@@ -31,7 +31,9 @@ class TimerManager(
     }
 
     fun stopTimer() {
-        job?.cancel()
-        job = null
+        runnable?.let {
+            handler.removeCallbacks(it)
+        }
+        runnable = null
     }
 }

@@ -15,7 +15,7 @@ fun MusicInfo.toSongBean(): SongBean {
         coverUrl = coverUrl,
         songName = musicName,
         id = id,
-        lyric = lyricUrl,
+        lyricUrl = lyricUrl,
         author = author,
         like = false,
     )

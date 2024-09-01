@@ -101,12 +101,12 @@ public class FlowView extends View {
         Palette.from(bitmap).generate(palette -> {
             // 提取颜色
             assert palette != null;
-            int lightColor1 = palette.getLightVibrantSwatch() != null ? palette.getLightVibrantSwatch().getRgb() : 0;
-            int lightColor2 = palette.getLightMutedSwatch() != null ? palette.getLightMutedSwatch().getRgb() : 0;
-            int vibrantColor = palette.getVibrantSwatch() != null ? palette.getVibrantSwatch().getRgb() : 0;
-            int mutedColor = palette.getMutedSwatch() != null ? palette.getMutedSwatch().getRgb() : 0;
-            int darkColor = palette.getDarkVibrantSwatch() != null ? palette.getDarkVibrantSwatch().getRgb() : 0;
-            backgroundColor = palette.getDarkMutedSwatch() != null ? palette.getDarkMutedSwatch().getRgb() : 0;
+            int lightColor1 = palette.getLightVibrantSwatch() != null ? palette.getLightVibrantSwatch().getRgb() : Color.GRAY;
+            int lightColor2 = palette.getLightMutedSwatch() != null ? palette.getLightMutedSwatch().getRgb() : lightColor1;
+            int vibrantColor = palette.getVibrantSwatch() != null ? palette.getVibrantSwatch().getRgb() : lightColor2;
+            int mutedColor = palette.getMutedSwatch() != null ? palette.getMutedSwatch().getRgb() : vibrantColor;
+            int darkColor = palette.getDarkVibrantSwatch() != null ? palette.getDarkVibrantSwatch().getRgb() : mutedColor;
+            backgroundColor = palette.getDarkMutedSwatch() != null ? palette.getDarkMutedSwatch().getRgb() : darkColor;
 
             flowColor[0] = lightColor1;
             flowColor[1] = vibrantColor;

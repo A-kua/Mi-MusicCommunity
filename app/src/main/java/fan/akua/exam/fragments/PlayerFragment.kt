@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import fan.akua.exam.AppState
@@ -14,24 +15,72 @@ import fan.akua.exam.databinding.FragmentPlayerBinding
 import fan.akua.exam.player.PlayerManager
 import fan.akua.exam.utils.formatSecondsToTime
 import fan.akua.exam.utils.logD
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class PlayerFragment : Fragment() {
     private val viewModel: PlayerViewModel by viewModels()
+    private lateinit var binding: FragmentPlayerBinding
+
+    private lateinit var imageFragment: ImageFragment
+    private lateinit var lyricFragment: LyricFragment
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return FragmentPlayerBinding.inflate(inflater).root
+        binding = FragmentPlayerBinding.inflate(inflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val binding = FragmentPlayerBinding.bind(view)
         super.onViewCreated(view, savedInstanceState)
+        resumeChildFragment(savedInstanceState)
         eventListen(binding)
+        eventRegister(binding)
+    }
+
+    override fun onDestroyView() {
+        binding.flowView.release()
+        super.onDestroyView()
+    }
+
+    private fun resumeChildFragment(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) {
+            imageFragment = ImageFragment()
+            lyricFragment = LyricFragment()
+            childFragmentManager.commit {
+                setReorderingAllowed(true)
+                add(R.id.container, imageFragment, imageFragment.javaClass.name)
+                add(R.id.container, lyricFragment, lyricFragment.javaClass.name)
+                hide(lyricFragment)
+            }
+        } else {
+            imageFragment =
+                childFragmentManager.findFragmentByTag(childFragmentManager.javaClass.name) as ImageFragment
+            lyricFragment =
+                childFragmentManager.findFragmentByTag(lyricFragment.javaClass.name) as LyricFragment
+        }
+        lifecycleScope.launch {
+            viewModel.uiState.collect { uiState ->
+                when (uiState.page) {
+                    PlayerUiState.PageMode.Image -> childFragmentManager.beginTransaction()
+                        .setReorderingAllowed(true)
+                        .hide(lyricFragment)
+                        .show(imageFragment)
+                        .commit()
+
+                    PlayerUiState.PageMode.Lyric -> childFragmentManager.beginTransaction()
+                        .setReorderingAllowed(true)
+                        .hide(imageFragment)
+                        .show(lyricFragment)
+                        .commit()
+                }
+            }
+        }
+    }
+
+    private fun eventRegister(binding: FragmentPlayerBinding) {
         binding.close.setOnClickListener {
             lifecycleScope.launch {
                 AppState.closeMusic()
@@ -39,17 +88,9 @@ class PlayerFragment : Fragment() {
         }
         binding.playType.setOnClickListener {
             when (PlayerManager.playMode.value) {
-                PlayerManager.PlayMode.SINGLE_LOOP -> {
-                    PlayerManager.setPlayMode(PlayerManager.PlayMode.LIST_LOOP)
-                }
-
-                PlayerManager.PlayMode.LIST_LOOP -> {
-                    PlayerManager.setPlayMode(PlayerManager.PlayMode.RANDOM)
-                }
-
-                PlayerManager.PlayMode.RANDOM -> {
-                    PlayerManager.setPlayMode(PlayerManager.PlayMode.SINGLE_LOOP)
-                }
+                PlayerManager.PlayMode.SINGLE_LOOP -> PlayerManager.setPlayMode(PlayerManager.PlayMode.LIST_LOOP)
+                PlayerManager.PlayMode.LIST_LOOP -> PlayerManager.setPlayMode(PlayerManager.PlayMode.RANDOM)
+                PlayerManager.PlayMode.RANDOM -> PlayerManager.setPlayMode(PlayerManager.PlayMode.SINGLE_LOOP)
             }
         }
         binding.lastSong.setOnClickListener {
@@ -64,6 +105,22 @@ class PlayerFragment : Fragment() {
     }
 
     private fun eventListen(binding: FragmentPlayerBinding) {
+        lifecycleScope.launch {
+            AppState.switchPageFlow.collect { event ->
+                if (event.showImage)
+                    childFragmentManager.commit {
+                        setReorderingAllowed(true)
+                        hide(lyricFragment)
+                        show(imageFragment)
+                    }
+                else
+                    childFragmentManager.commit {
+                        setReorderingAllowed(true)
+                        hide(imageFragment)
+                        show(lyricFragment)
+                    }
+            }
+        }
         lifecycleScope.launch {
             PlayerManager.playMode.collect { mode ->
                 binding.playType.run {

@@ -82,6 +82,7 @@ class AndroidMusicPlayer(
     override fun pause() {
         mediaPlayer.pause()
         timerManager.pauseTimer()
+        "simon".logD("pause timer")
         _pauseFlow.value = true
     }
 

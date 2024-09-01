@@ -107,10 +107,12 @@ object PlayerManager {
     }
 
     fun pause() {
+        "simon".logD("pause")
         androidMusicPlayer.pause()
     }
 
     fun start() {
+        "simon".logD("start")
         androidMusicPlayer.start()
     }
 

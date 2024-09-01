@@ -6,6 +6,6 @@ import fan.akua.exam.utils.AnimatorUtils
 
 class AkuaItemAnimation : ItemAnimation {
     override fun onItemEnterAnimation(view: View) {
-        AnimatorUtils.gptIntroAnimate(view, 0.2f, -110)
+//        AnimatorUtils.gptIntroAnimate(view, 0.2f, -110)
     }
 }
