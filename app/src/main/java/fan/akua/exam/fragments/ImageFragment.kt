@@ -37,6 +37,11 @@ class ImageFragment : Fragment() {
         return binding.root
     }
 
+    override fun onDestroyView() {
+        animator.cancel()
+        super.onDestroyView()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.img.setOnClickListener {
@@ -56,12 +61,9 @@ class ImageFragment : Fragment() {
         lifecycleScope.launch {
             PlayerManager.pause.collect { isPause ->
                 if (isPause) {
-                    if (animator.isStarted && animator.isRunning)
-                        animator.pause()
+                    animator.pause()
                 } else {
-                    if (animator.isStarted)
-                        animator.resume()
-                    else if (animator.isPaused)
+                    if (animator.isPaused)
                         animator.resume()
                     else
                         animator.start()

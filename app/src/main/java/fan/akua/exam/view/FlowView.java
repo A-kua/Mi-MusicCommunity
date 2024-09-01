@@ -34,7 +34,7 @@ public class FlowView extends View {
     private int newBackGroundColor;
 
     private int backgroundColor = Color.argb(255, 249, 211, 237);
-    private int flowColor[] = new int[5];
+    private final int[] flowColor = new int[5];
 
     public FlowView(Context context) {
         this(context, null);

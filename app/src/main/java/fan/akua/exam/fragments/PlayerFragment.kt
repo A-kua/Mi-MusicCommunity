@@ -34,6 +34,7 @@ class PlayerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentPlayerBinding.inflate(inflater)
+        binding.flowView.setColorEnhance(true)
         return binding.root
     }
 
@@ -65,15 +66,15 @@ class PlayerFragment : Fragment() {
             lyricFragment = LyricFragment()
             childFragmentManager.commit {
                 setReorderingAllowed(true)
-                add(R.id.container, imageFragment, imageFragment.javaClass.name)
-                add(R.id.container, lyricFragment, lyricFragment.javaClass.name)
+                add(R.id.container, imageFragment, ImageFragment::class.qualifiedName)
+                add(R.id.container, lyricFragment, LyricFragment::class.qualifiedName)
                 hide(lyricFragment)
             }
         } else {
             imageFragment =
-                childFragmentManager.findFragmentByTag(childFragmentManager.javaClass.name) as ImageFragment
+                childFragmentManager.findFragmentByTag(ImageFragment::class.qualifiedName) as ImageFragment
             lyricFragment =
-                childFragmentManager.findFragmentByTag(lyricFragment.javaClass.name) as LyricFragment
+                childFragmentManager.findFragmentByTag(LyricFragment::class.qualifiedName) as LyricFragment
         }
         lifecycleScope.launch {
             viewModel.uiState.collect { uiState ->
@@ -123,13 +124,19 @@ class PlayerFragment : Fragment() {
             }
         }
         binding.lastSong.setOnClickListener {
-            PlayerManager.playLast()
+            lifecycleScope.launch {
+                PlayerManager.playLast()
+            }
         }
         binding.nextSong.setOnClickListener {
-            PlayerManager.playNext()
+            lifecycleScope.launch {
+                PlayerManager.playNext()
+            }
         }
         binding.playPause.setOnClickListener {
-            if (PlayerManager.pause.value) PlayerManager.start() else PlayerManager.pause()
+            lifecycleScope.launch {
+                if (PlayerManager.pause.value) PlayerManager.start() else PlayerManager.pause()
+            }
         }
     }
 
