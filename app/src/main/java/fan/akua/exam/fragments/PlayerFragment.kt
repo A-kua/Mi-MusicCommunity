@@ -134,7 +134,10 @@ class PlayerFragment : Fragment() {
         }
         lifecycleScope.launch {
             PlayerManager.bitmapFlow.collect { bitmap ->
-                bitmap?.let { binding.flowView.setBitmap(it) }
+                bitmap?.let {
+                    "simon".logD("get bitmap $bitmap ${bitmap.isRecycled}")
+                    binding.flowView.setBitmap(it)
+                }
             }
         }
         lifecycleScope.launch {

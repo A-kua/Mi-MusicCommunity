@@ -81,10 +81,11 @@ object PlayerManager {
 
             currentRequest = object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    _bitmapFlow.value = resource
+                    _bitmapFlow.value = resource.copy(Bitmap.Config.ARGB_8888, false)
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {
+                    currentRequest = null
                 }
 
                 override fun onLoadFailed(errorDrawable: Drawable?) {

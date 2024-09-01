@@ -53,5 +53,6 @@ fun MainUiState.toRVModels(resources: Resources): List<ItemBind> {
         })
     }
 
+
     return listOf(BannerModel(banner)) + otherList + largeModels
 }

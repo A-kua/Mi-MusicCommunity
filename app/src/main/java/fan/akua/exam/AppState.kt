@@ -1,5 +1,6 @@
 package fan.akua.exam
 
+import fan.akua.exam.events.ClickMusic
 import fan.akua.exam.events.CloseMusic
 import fan.akua.exam.events.OpenMusic
 import fan.akua.exam.events.SwitchPage
@@ -13,6 +14,8 @@ object AppState {
     val closeFlow = _closeFlow.asSharedFlow()
     private val _switchPageFlow = MutableSharedFlow<SwitchPage>()
     val switchPageFlow = _switchPageFlow.asSharedFlow()
+    private val _clickMusicFlow = MutableSharedFlow<ClickMusic>()
+    val clickMusicFlow = _clickMusicFlow.asSharedFlow()
 
     suspend fun openMusic() {
         _openFlow.emit(OpenMusic())
@@ -24,5 +27,9 @@ object AppState {
 
     suspend fun switchPage(showImage: Boolean) {
         _switchPageFlow.emit(SwitchPage(showImage))
+    }
+
+    suspend fun clickMusic(clickMusic: ClickMusic) {
+        _clickMusicFlow.emit(clickMusic)
     }
 }

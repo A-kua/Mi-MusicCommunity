@@ -1,7 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/black"
+    android:background="#bfbfbf"
     android:layout_height="74dp">
 
-</LinearLayout>
+    <fan.akua.exam.view.ClipPathCircleImage
+        android:id="@+id/panel_img"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="24dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/panel_music_name"
+        style="@style/PlayerTitleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/panel_img"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="到此为止" />
+
+    <TextView
+        android:id="@+id/panel_music_author"
+        style="@style/PlayerAuthorStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/panel_music_name"
+        app:layout_constraintStart_toStartOf="@id/panel_music_name"
+        app:layout_constraintTop_toBottomOf="@id/panel_music_name"
+        tools:text="张国荣" />
+
+    <ImageButton
+        android:id="@+id/panel_last_song"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_button_48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_last_song"
+        app:layout_constraintBottom_toBottomOf="@+id/panel_play_pause"
+        app:layout_constraintEnd_toStartOf="@+id/panel_play_pause"
+        app:layout_constraintTop_toTopOf="@+id/panel_play_pause" />
+
+    <ImageButton
+        android:id="@+id/panel_play_pause"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_button_48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_pausing"
+        app:layout_constraintBottom_toBottomOf="@+id/panel_next_song"
+        app:layout_constraintEnd_toStartOf="@+id/panel_next_song"
+        app:layout_constraintTop_toTopOf="@+id/panel_next_song" />
+
+    <ImageButton
+        android:id="@+id/panel_next_song"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_button_48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_next_song"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

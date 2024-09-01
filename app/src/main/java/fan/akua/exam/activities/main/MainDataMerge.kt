@@ -36,7 +36,7 @@ object MainDataMerge {
                 val nawItem = naw[oldItemPosition]
                 if (oldItem is BannerModel && nawItem is BannerModel) {
                     return oldItem.data.areListsEqual(nawItem.data) { aItem, bItem ->
-                        aItem.id == bItem.id && aItem.musicName == bItem.musicName && aItem.author == bItem.author && aItem.coverUrl == bItem.coverUrl
+                        !(aItem.id == bItem.id && aItem.musicName == bItem.musicName && aItem.author == bItem.author && aItem.coverUrl == bItem.coverUrl)
                     }
                 } else if (oldItem is GridModel && nawItem is GridModel) {
                     val aMusicInfo = oldItem.musicInfo
@@ -44,7 +44,7 @@ object MainDataMerge {
                     return aMusicInfo.id == bMusicInfo.id && aMusicInfo.musicName == bMusicInfo.musicName && aMusicInfo.author == bMusicInfo.author && aMusicInfo.coverUrl == bMusicInfo.coverUrl
                 } else if (oldItem is LargeCardModel && nawItem is LargeCardModel) {
                     return oldItem.data.musicInfoList.areListsEqual(nawItem.data.musicInfoList) { aItem, bItem ->
-                        aItem.id == bItem.id && aItem.musicName == bItem.musicName && aItem.author == bItem.author && aItem.coverUrl == bItem.coverUrl
+                        !(aItem.id == bItem.id && aItem.musicName == bItem.musicName && aItem.author == bItem.author && aItem.coverUrl == bItem.coverUrl)
                     }
                 }
                 return false

@@ -20,6 +20,7 @@ import fan.akua.exam.data.SongBean
 import fan.akua.exam.data.toSongBean
 import fan.akua.exam.databinding.ItemLargecardBinding
 import fan.akua.exam.databinding.ItemTypeLargecardBinding
+import fan.akua.exam.events.ClickMusic
 import fan.akua.exam.player.PlayerManager
 import fan.akua.exam.utils.GenericDiffUtil
 import fan.akua.exam.utils.logD
@@ -72,11 +73,8 @@ class LargeCardModel(val data: HomePageInfo) : ItemBind {
                     }
                 }
                 onClick(R.id.parentCardView) {
-                    val model = getModel<MusicInfo>()
-
-                    PlayerManager.play(listOf(model.toSongBean()), 0)
                     CoroutineScope(Dispatchers.Main).launch {
-                        AppState.openMusic()
+                        AppState.clickMusic(ClickMusic(musicInfo = getModel()))
                     }
                 }
             }.models = data.musicInfoList

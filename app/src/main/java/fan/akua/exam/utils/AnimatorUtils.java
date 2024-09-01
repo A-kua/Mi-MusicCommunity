@@ -24,6 +24,8 @@ public class AnimatorUtils {
 
 
     public static void gptIntroAnimate(View targetLayout, float translationDis, int duration) {
+        if (targetLayout.getAnimation() != null)
+            targetLayout.getAnimation().cancel();
         targetLayout.clearAnimation();
         targetLayout.setPivotY(getDistanceToCenter(targetLayout));
         targetLayout.setPivotX(getDistanceToCenterX(targetLayout));

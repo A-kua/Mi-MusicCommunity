@@ -2,9 +2,16 @@ package fan.akua.exam.activities.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import fan.akua.exam.App
+import fan.akua.exam.AppState
 import fan.akua.exam.api.MusicService
+import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.data.separateBanner
+import fan.akua.exam.data.toSongBean
+import fan.akua.exam.player.PlayerManager
 import fan.akua.exam.utils.logD
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,6 +40,33 @@ class MainViewModel : ViewModel() {
             state = RequestState.ERROR
         )
         "MainViewModel".logD(msg)
+    }
+
+    init {
+        viewModelScope.launch {
+            AppState.clickMusicFlow.collect { clickMusic ->
+                playSong(clickMusic.musicInfo)
+            }
+        }
+    }
+
+    private fun playSong(musicInfo: MusicInfo) {
+        viewModelScope.launch {
+            val state = _uiState.value
+            var position = 0
+            val musicList = state.items.first {
+                position = it.musicInfoList.indexOf(musicInfo)
+                position != -1
+            }.musicInfoList.map {
+                it.toSongBean()
+            }
+            if (position == -1) return@launch
+            PlayerManager.play(musicList, position)
+
+            CoroutineScope(Dispatchers.Main).launch {
+                AppState.openMusic()
+            }
+        }
     }
 
     fun loadNextPage() {

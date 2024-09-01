@@ -2,6 +2,9 @@ package fan.akua.exam.activities.main
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +28,7 @@ import fan.akua.exam.activities.main.model.LargeCardModel
 import fan.akua.exam.activities.main.model.TitleModel
 import fan.akua.exam.databinding.ActivityMainBinding
 import fan.akua.exam.fragments.PlayerFragment
+import fan.akua.exam.player.PlayerManager
 import fan.akua.exam.utils.akuaEdgeToEdge
 import fan.akua.exam.utils.logD
 import kotlinx.coroutines.launch
@@ -47,6 +51,7 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction()
                 .setReorderingAllowed(true)
                 .add(R.id.fragmentHost, fragment, fragment.javaClass.name)
+                .hide(fragment)
                 .commit()
         } else {
             fragment =
@@ -55,13 +60,10 @@ class MainActivity : AppCompatActivity() {
 
         initialViewState()
         initialEvent()
-
-        binding.rv.bindingAdapter.setAnimation(AkuaItemAnimation())
-        binding.rv.bindingAdapter.animationRepeat = true
+        initialPanel()
 
         lifecycleScope.launch {
             viewModel.uiState.collect { uiState ->
-                "MainActivity".logD("data update: ${uiState.state}")
                 when (uiState.state) {
                     RequestState.SUCCESS -> {
                         val toRVModels = uiState.toRVModels(resources = resources)
@@ -136,6 +138,8 @@ class MainActivity : AppCompatActivity() {
         binding.swipe.setRefreshHeader(BezierRadarHeader(this))
         // 添加头部搜索
         binding.rv.bindingAdapter.addHeader(HeaderModel(), animation = true)
+        binding.rv.bindingAdapter.setAnimation(AkuaItemAnimation())
+        binding.rv.bindingAdapter.animationRepeat=true
     }
 
     private fun initialEvent() {
@@ -157,7 +161,9 @@ class MainActivity : AppCompatActivity() {
                 binding.slidingLayout.panelState = PanelState.COLLAPSED
             }
         }
+    }
 
+    private fun initialPanel() {
         binding.slidingLayout.addPanelSlideListener(object :
             SlidingUpPanelLayout.PanelSlideListener {
             override fun onPanelSlide(panel: View, slideOffset: Float) {
@@ -193,5 +199,30 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+
+        lifecycleScope.launch {
+            PlayerManager.bitmapFlow.collect { bitmap ->
+                bitmap?.let {
+                    binding.panel.root.findViewById<ImageView>(R.id.panel_img)
+                        .setImageBitmap(bitmap)
+                }
+            }
+        }
+        lifecycleScope.launch {
+            PlayerManager.pause.collect { isPause ->
+                binding.panel.root.findViewById<ImageButton>(R.id.panel_play_pause)
+                    .setImageResource(if (isPause) R.drawable.ic_pausing else R.drawable.ic_playing)
+            }
+        }
+        lifecycleScope.launch {
+            PlayerManager.currentSong.collect { song ->
+                song?.let {
+                    binding.panel.root.findViewById<TextView>(R.id.panel_music_name).text =
+                        it.songName
+                    binding.panel.root.findViewById<TextView>(R.id.panel_music_author).text =
+                        it.author
+                }
+            }
+        }
     }
 }
