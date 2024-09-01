@@ -113,6 +113,7 @@ object PlayerManager {
             Glide.with(App.context)
                 .asBitmap()
                 .load(song.coverUrl)
+                .override(500, 500)
                 .into(currentRequest!!)
         }
     }
