@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import fan.akua.exam.AppState
 import fan.akua.exam.R
 import fan.akua.exam.databinding.FragmentPlayerBinding
 import fan.akua.exam.player.PlayerManager
@@ -30,6 +31,39 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val binding = FragmentPlayerBinding.bind(view)
         super.onViewCreated(view, savedInstanceState)
+        eventListen(binding)
+        binding.close.setOnClickListener {
+            lifecycleScope.launch {
+                AppState.closeMusic()
+            }
+        }
+        binding.playType.setOnClickListener {
+            when (PlayerManager.playMode.value) {
+                PlayerManager.PlayMode.SINGLE_LOOP -> {
+                    PlayerManager.setPlayMode(PlayerManager.PlayMode.LIST_LOOP)
+                }
+
+                PlayerManager.PlayMode.LIST_LOOP -> {
+                    PlayerManager.setPlayMode(PlayerManager.PlayMode.RANDOM)
+                }
+
+                PlayerManager.PlayMode.RANDOM -> {
+                    PlayerManager.setPlayMode(PlayerManager.PlayMode.SINGLE_LOOP)
+                }
+            }
+        }
+        binding.lastSong.setOnClickListener {
+            PlayerManager.playNext()
+        }
+        binding.nextSong.setOnClickListener {
+            PlayerManager.playNext()
+        }
+        binding.playPause.setOnClickListener {
+            if (PlayerManager.pause.value) PlayerManager.start() else PlayerManager.pause()
+        }
+    }
+
+    private fun eventListen(binding: FragmentPlayerBinding) {
         lifecycleScope.launch {
             PlayerManager.playMode.collect { mode ->
                 binding.playType.run {

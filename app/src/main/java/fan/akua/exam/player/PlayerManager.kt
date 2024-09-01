@@ -60,6 +60,10 @@ object PlayerManager {
     val bitmapFlow: StateFlow<Bitmap?> = _bitmapFlow
     private var currentRequest: CustomTarget<Bitmap>? = null
 
+    fun setPlayMode(mode: PlayMode) {
+        _playMode.value = mode
+    }
+
     private fun internalPlay(index: Int) {
         val song = _playList.value?.getOrNull(index)
         song?.let {
@@ -68,7 +72,7 @@ object PlayerManager {
             androidMusicPlayer.setBean(song)
             waitForPrepare = true
 
-            "simon".logD("startPlay "+song.songName)
+            "simon".logD("startPlay " + song.songName)
 
             // 如果有当前请求，取消它
             currentRequest?.let {

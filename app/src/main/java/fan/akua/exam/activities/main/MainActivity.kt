@@ -152,6 +152,11 @@ class MainActivity : AppCompatActivity() {
                 binding.slidingLayout.panelState = PanelState.EXPANDED
             }
         }
+        lifecycleScope.launch {
+            AppState.closeFlow.collect {
+                binding.slidingLayout.panelState = PanelState.COLLAPSED
+            }
+        }
 
         binding.slidingLayout.addPanelSlideListener(object :
             SlidingUpPanelLayout.PanelSlideListener {
