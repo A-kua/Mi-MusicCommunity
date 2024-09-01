@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# 坏事的东西
+-keep class fan.akua.exam.data.** { *; }
+-keep class fan.akua.exam.api.** { *; }
