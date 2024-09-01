@@ -30,7 +30,7 @@
 6. [x] 进度条可拖拽，拖拽后更新播放时间和歌词进度。
 7. [x] 点击中间区域，显示歌词，再次点击回到图片。
 8. [x] 播放页背景根据图片取色。
-9. [x] 
+9. [x] 关闭动画。
 
 <div>
     <a href="app/release/app-release.apk?inline=false">Download Release App（Day2）</a>
