@@ -44,7 +44,7 @@ class LargeCardModel(val data: HomePageInfo) : ItemBind {
                             oldItem.author == newItem.author
                 }
             )
-            val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
+            val diffResult = DiffUtil.calculateDiff(diffUtilCallback,false)
             binding.rv.bindingAdapter.models = data.musicInfoList
             diffResult.dispatchUpdatesTo(binding.rv.bindingAdapter)
         } else {

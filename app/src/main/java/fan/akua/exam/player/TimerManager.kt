@@ -11,6 +11,7 @@ class TimerManager(
 
     fun startTimer() {
         stopTimer()
+        isPaused = false
         runnable = object : Runnable {
             override fun run() {
                 if (!isPaused) {

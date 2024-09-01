@@ -158,7 +158,7 @@ public class FlowView extends View {
         startAnimator();
     }
 
-    private synchronized void pauseAnimator() {
+    public synchronized void pauseAnimator() {
         if (sizeValues[0] == null) return;
         if (!sizeValues[0].isStarted()) return;
         for (ValueAnimator[] positionValue : positionValues) {
@@ -171,7 +171,7 @@ public class FlowView extends View {
         }
     }
 
-    private synchronized void startAnimator() {
+    public synchronized void startAnimator() {
         if (sizeValues[0] == null) return;
         if (sizeValues[0].isStarted()) return;
         for (ValueAnimator[] positionValue : positionValues) {

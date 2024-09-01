@@ -44,6 +44,16 @@ class PlayerFragment : Fragment() {
         eventRegister(binding)
     }
 
+    override fun onStart() {
+        super.onStart()
+        binding.flowView.startAnimator()
+    }
+
+    override fun onStop() {
+        binding.flowView.pauseAnimator()
+        super.onStop()
+    }
+
     override fun onDestroyView() {
         binding.flowView.release()
         super.onDestroyView()
@@ -113,7 +123,7 @@ class PlayerFragment : Fragment() {
             }
         }
         binding.lastSong.setOnClickListener {
-            PlayerManager.playNext()
+            PlayerManager.playLast()
         }
         binding.nextSong.setOnClickListener {
             PlayerManager.playNext()
@@ -178,7 +188,7 @@ class PlayerFragment : Fragment() {
         }
         lifecycleScope.launch {
             PlayerManager.progress.collect { progress ->
-                if (isTouching)return@collect
+                if (isTouching) return@collect
                 binding.currentTime.text = progress.formatSecondsToTime()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     binding.progressBar.setProgress(progress.toInt(), false)

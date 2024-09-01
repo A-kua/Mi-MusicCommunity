@@ -68,6 +68,19 @@ object PlayerManager {
         _playMode.value = mode
     }
 
+    /**
+     * 专门针对单曲播放的性能优化
+     */
+    private fun singleLoopPlay(index: Int) {
+        val song = _playList.value?.getOrNull(index)
+        if (song == _currentSong.value) {
+            androidMusicPlayer.seekTo(0)
+            androidMusicPlayer.start()
+        } else {
+            internalPlay(index)
+        }
+    }
+
     private fun internalPlay(index: Int) {
         val song = _playList.value?.getOrNull(index)
         song?.let {
@@ -123,7 +136,11 @@ object PlayerManager {
 
     fun playNext() {
         when (_playMode.value) {
-            PlayMode.SINGLE_LOOP, PlayMode.LIST_LOOP -> {
+            PlayMode.SINGLE_LOOP -> {
+                singleLoopPlay(_indexFlow.value)
+            }
+
+            PlayMode.LIST_LOOP -> {
                 val index = _indexFlow.value + 1
                 internalPlay(index)
             }
@@ -136,7 +153,7 @@ object PlayerManager {
                         } else {
                             var newRandomNumber: Int
                             do {
-                                newRandomNumber = Random.nextInt(0, playlist.size - 1)
+                                newRandomNumber = Random.nextInt(0, playlist.size)
                             } while (newRandomNumber == _indexFlow.value)
                             newRandomNumber
                         }

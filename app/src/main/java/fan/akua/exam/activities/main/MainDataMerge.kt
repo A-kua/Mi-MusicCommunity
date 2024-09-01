@@ -49,6 +49,6 @@ object MainDataMerge {
                 }
                 return false
             }
-        })
+        }, false)
     }
 }
