@@ -57,7 +57,6 @@ class LyricFragment : Fragment() {
         binding.lyricViewX.setOnTouchListener { v, event ->
             if (event?.action == MotionEvent.ACTION_UP)
                 lifecycleScope.launch {
-                    "simon".logD("event")
                     AppState.switchPage(PageMode.Image)
                 }
             return@setOnTouchListener true

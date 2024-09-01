@@ -30,12 +30,10 @@ object PlayerManager {
 
             },
             preparedListener = { iPlayer, songBean ->
-                "AndroidMusicPlayer".logD("prepare")
                 if (waitForPrepare)
                     waitForPrepare = false
             },
             completionListener = {
-                "AndroidMusicPlayer".logD("completionListener222")
                 playNext()
             }
         )
@@ -88,7 +86,6 @@ object PlayerManager {
             _currentSong.value = it
             androidMusicPlayer.setBean(song)
             waitForPrepare = true
-            "simon".logD("startPlay " + song.songName)
 
             // 如果有当前请求，取消它
             currentRequest?.let {
@@ -97,7 +94,6 @@ object PlayerManager {
 
             currentRequest = object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    "bug15-51".logD("bitmap? $resource")
                     _bitmapFlow.value = resource.copy(Bitmap.Config.ARGB_8888, false)
                 }
 
@@ -126,12 +122,10 @@ object PlayerManager {
     }
 
     fun pause() {
-        "simon".logD("pause")
         androidMusicPlayer.pause()
     }
 
     fun start() {
-        "simon".logD("start")
         androidMusicPlayer.start()
     }
 

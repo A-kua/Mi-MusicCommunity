@@ -32,7 +32,6 @@ class AndroidMusicPlayer(
                 preparedListener?.invoke(this@AndroidMusicPlayer, _songFlow.value)
                 if (_autoStart) this@AndroidMusicPlayer.start()
                 _durationFlow.value = this@AndroidMusicPlayer.getDuration()
-                "simon".logD("duration flow")
             }
             setOnErrorListener { _, _, _ ->
                 errorListener?.invoke(this@AndroidMusicPlayer)
@@ -40,7 +39,6 @@ class AndroidMusicPlayer(
                 return@setOnErrorListener true
             }
             setOnCompletionListener {
-                "AndroidMusicPlayer".logD("completionListener")
                 completionListener?.invoke(this@AndroidMusicPlayer)
                 _pauseFlow.value = true
             }
@@ -77,13 +75,11 @@ class AndroidMusicPlayer(
         mediaPlayer.start()
         timerManager.startTimer()
         _pauseFlow.value = false
-        "simon".logD("pause ${_pauseFlow.value}")
     }
 
     override fun pause() {
         mediaPlayer.pause()
         timerManager.pauseTimer()
-        "simon".logD("pause timer")
         _pauseFlow.value = true
     }
 

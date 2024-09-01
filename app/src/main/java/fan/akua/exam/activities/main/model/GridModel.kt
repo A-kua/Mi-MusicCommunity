@@ -2,6 +2,7 @@ package fan.akua.exam.activities.main.model
 
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.drake.brv.BindingAdapter
 import com.drake.brv.item.ItemBind
 import fan.akua.exam.AppState
@@ -24,6 +25,7 @@ class GridModel(val musicInfo: MusicInfo, val spanCount: Int) : ItemBind {
         }
         Glide.with(binding.img)
             .load(musicInfo.coverUrl)
+            .transition(DrawableTransitionOptions.withCrossFade(500))
             .into(binding.img)
         binding.titleTextView.text = musicInfo.musicName
         binding.authorTextView.text = musicInfo.author

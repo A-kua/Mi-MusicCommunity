@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.drake.brv.BindingAdapter
 import com.drake.brv.item.ItemBind
 import com.drake.brv.utils.bindingAdapter
@@ -59,6 +60,7 @@ class LargeCardModel(val data: HomePageInfo) : ItemBind {
                     itemLargeBinding.musicInfo = model
                     Glide.with(itemLargeBinding.img)
                         .load(model.coverUrl)
+                        .transition(DrawableTransitionOptions.withCrossFade(500))
                         .into(itemLargeBinding.img)
                     itemLargeBinding.playButton.setOnClickListener {
                         Toast.makeText(

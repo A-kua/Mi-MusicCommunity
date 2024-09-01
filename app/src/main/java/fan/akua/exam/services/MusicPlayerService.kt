@@ -40,7 +40,6 @@ class MusicPlayerService : LifecycleService(), AudioFocusUtils.OnAudioFocusChang
 
     override fun onDestroy() {
         super.onDestroy()
-        "simon".logD("onDestroy")
         mAudioFocusUtils.abandonAudioFocus() // 放弃音频焦点
         mMediaSession?.apply {
             release()
@@ -67,11 +66,8 @@ class MusicPlayerService : LifecycleService(), AudioFocusUtils.OnAudioFocusChang
                 }
 
             mMusicNotification = NotificationDistribute.Builder(this, mMediaSession!!)
-            "simon".logD("onStartCommand")
             PlayerManager.currentSong.onEach {
-                "simon".logD("notificationSetSong ")
                 if (it != null) {
-                    "simon".logD("notificationSetSong "+it.songName)
                     mMusicNotification?.setSongBean(it)
                     refreshMediaNotifications()
                 }
@@ -82,7 +78,6 @@ class MusicPlayerService : LifecycleService(), AudioFocusUtils.OnAudioFocusChang
             }.launchIn(lifecycleScope)
 
             PlayerManager.duration.onEach {
-                "simon".logD("getDuration ")
                 mMusicNotification?.setDuration(it)
             }.launchIn(lifecycleScope)
 

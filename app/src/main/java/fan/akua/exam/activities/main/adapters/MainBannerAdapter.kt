@@ -6,6 +6,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.youth.banner.adapter.BannerAdapter
 import fan.akua.exam.R
@@ -27,6 +28,7 @@ class MainBannerAdapter(var data: List<MusicInfo>) :
     override fun onBindView(holder: BannerViewHolder, data: MusicInfo, position: Int, size: Int) {
         Glide.with(holder.itemView)
             .load(data.coverUrl)
+            .transition(DrawableTransitionOptions.withCrossFade(500))
             .into(holder.binding.img)
     }
 

@@ -32,7 +32,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.main.MainActivity" />
+        <activity
+            android:name=".activities.main.MainActivity"
+            android:windowSoftInputMode="stateHidden" />
 
         <service
             android:name=".services.MusicPlayerService"

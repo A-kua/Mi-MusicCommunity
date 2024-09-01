@@ -18,8 +18,6 @@ import android.view.animation.AnticipateOvershootInterpolator;
 
 import androidx.palette.graphics.Palette;
 
-import fan.akua.exam.Constants;
-
 public class FlowView extends View {
 
     private final RadialGradient[] gradients = new RadialGradient[5];
@@ -112,15 +110,16 @@ public class FlowView extends View {
             flowColor[2] = lightColor2;
             flowColor[3] = mutedColor;
             flowColor[4] = darkColor;
+
             // 初始化渐变
             for (int i = 0; i < gradients.length; i++) {
                 gradients[i] = createSignalColorGradient(flowColor[i], vMax);
             }
 
             newBackGroundColor = backgroundColor;
-
             startAnimator();
         });
+
     }
 
     /**
@@ -196,8 +195,6 @@ public class FlowView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        if (sizeValues[0] == null) return;
         canvas.drawColor(newBackGroundColor);
 
         for (int i = 0; i < sizeValues.length; i++) {
