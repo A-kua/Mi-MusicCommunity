@@ -14,6 +14,13 @@ fun <T> List<T>.areListsEqual(list2: List<T>, areContentsTheSame: (T, T) -> Bool
     return true
 }
 
+fun <T> List<T>.areListsEqual(newList: List<T>?): Boolean {
+    if (newList == null) return false
+    if (this.size != newList.size) return false
+
+    return this.zip(newList).all { (current, new) -> current == new }
+}
+
 /**
  * 在Item的类型发生改变时插入一个新Item
  */

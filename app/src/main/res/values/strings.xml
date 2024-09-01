@@ -11,4 +11,5 @@
     <string name="str_no_data">没有数据可显示</string>
     <string name="str_loading">数据加载中</string>
     <string name="str_error">数据加载出错啦！</string>
+    <string name="channel_name">音乐播放服务</string>
 </resources>

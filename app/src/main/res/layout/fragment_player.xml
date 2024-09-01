@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <fan.akua.exam.view.FlowView
+        android:id="@+id/flow_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <ImageButton
+        android:id="@+id/play_type"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="80dp"
+        android:background="@drawable/bg_button_48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_play_type_order"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/last_song"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/last_song"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_button_48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_last_song"
+        app:layout_constraintBottom_toBottomOf="@+id/play_type"
+        app:layout_constraintEnd_toStartOf="@+id/play_pause"
+        app:layout_constraintStart_toEndOf="@+id/play_type" />
+
+    <ImageButton
+        android:id="@+id/play_pause"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_button_48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_pausing"
+        app:layout_constraintBottom_toBottomOf="@+id/play_type"
+        app:layout_constraintEnd_toStartOf="@+id/next_song"
+        app:layout_constraintStart_toEndOf="@+id/last_song" />
+
+    <ImageButton
+        android:id="@+id/next_song"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_button_48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_next_song"
+        app:layout_constraintBottom_toBottomOf="@+id/play_type"
+        app:layout_constraintEnd_toStartOf="@+id/menu"
+        app:layout_constraintStart_toEndOf="@+id/play_pause" />
+
+    <ImageButton
+        android:id="@+id/menu"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_button_48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_menu"
+        app:layout_constraintBottom_toBottomOf="@+id/play_type"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/next_song" />
+
+    <ImageButton
+        android:id="@+id/close"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/bg_button_48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_close"
+        app:layout_constraintEnd_toEndOf="@+id/menu"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SeekBar
+        android:id="@+id/progress_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
+        app:layout_constraintBottom_toTopOf="@id/play_type"
+        app:layout_constraintEnd_toEndOf="@id/menu"
+        app:layout_constraintStart_toStartOf="@id/play_type"
+        tools:progress="60" />
+
+    <TextView
+        android:id="@+id/current_time"
+        style="@style/ProgressStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="6dp"
+        app:layout_constraintStart_toStartOf="@id/progress_bar"
+        app:layout_constraintTop_toBottomOf="@id/progress_bar"
+        tools:text="08:33" />
+
+    <TextView
+        android:id="@+id/duration_time"
+        style="@style/ProgressStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="6dp"
+        app:layout_constraintEnd_toEndOf="@id/progress_bar"
+        app:layout_constraintTop_toBottomOf="@id/progress_bar"
+        tools:text="09:33" />
+
+    <TextView
+        android:id="@+id/music_name"
+        style="@style/PlayerTitleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@id/progress_bar"
+        app:layout_constraintStart_toStartOf="@id/progress_bar"
+        tools:text="到此为止" />
+
+    <TextView
+        android:id="@+id/music_author"
+        style="@style/PlayerAuthorStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/music_name"
+        app:layout_constraintStart_toStartOf="@id/music_name"
+        app:layout_constraintTop_toBottomOf="@id/music_name"
+        tools:text="张国荣" />
+
+    <ImageButton
+        android:id="@+id/like"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_button_48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_unlike"
+        app:layout_constraintBottom_toBottomOf="@id/music_author"
+        app:layout_constraintEnd_toEndOf="@+id/progress_bar"
+        app:layout_constraintTop_toTopOf="@id/music_name" />
+</androidx.constraintlayout.widget.ConstraintLayout>

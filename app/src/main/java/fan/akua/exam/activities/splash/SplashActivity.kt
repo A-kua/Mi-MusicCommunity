@@ -39,7 +39,8 @@ class SplashActivity : AppCompatActivity() {
                 jumpActivity()
             else
                 showTermsDialog()
-        }, 2 * 1000)
+//        }, 2 * 1000)
+        }, 10)
     }
 
     private fun jumpActivity() {

@@ -8,3 +8,15 @@ data class MusicInfo(
     val musicUrl: String,
     val lyricUrl: String,
 )
+
+fun MusicInfo.toSongBean(): SongBean {
+    return SongBean(
+        url = musicUrl,
+        coverUrl = coverUrl,
+        songName = musicName,
+        id = id,
+        lyric = lyricUrl,
+        author = author,
+        like = false,
+    )
+}

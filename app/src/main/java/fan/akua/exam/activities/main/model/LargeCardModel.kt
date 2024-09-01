@@ -11,13 +11,21 @@ import com.drake.brv.item.ItemBind
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.linear
 import com.drake.brv.utils.setup
+import fan.akua.exam.AppState
 import fan.akua.exam.R
 import fan.akua.exam.activities.main.AkuaItemAnimation
 import fan.akua.exam.data.HomePageInfo
 import fan.akua.exam.data.MusicInfo
+import fan.akua.exam.data.SongBean
+import fan.akua.exam.data.toSongBean
 import fan.akua.exam.databinding.ItemLargecardBinding
 import fan.akua.exam.databinding.ItemTypeLargecardBinding
+import fan.akua.exam.player.PlayerManager
 import fan.akua.exam.utils.GenericDiffUtil
+import fan.akua.exam.utils.logD
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LargeCardModel(val data: HomePageInfo) : ItemBind {
     override fun onBind(vh: BindingAdapter.BindingViewHolder) {
@@ -55,15 +63,20 @@ class LargeCardModel(val data: HomePageInfo) : ItemBind {
                     Glide.with(itemLargeBinding.img)
                         .load(model.coverUrl)
                         .into(itemLargeBinding.img)
-                    itemLargeBinding.root.setOnClickListener {
-                        Toast.makeText(context, model.musicName, Toast.LENGTH_SHORT).show()
-                    }
                     itemLargeBinding.playButton.setOnClickListener {
                         Toast.makeText(
                             context,
                             "将${model.musicName}添加到音乐列表",
                             Toast.LENGTH_SHORT
                         ).show()
+                    }
+                }
+                onClick(R.id.parentCardView) {
+                    val model = getModel<MusicInfo>()
+
+                    PlayerManager.play(listOf(model.toSongBean()), 0)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        AppState.openMusic()
                     }
                 }
             }.models = data.musicInfoList

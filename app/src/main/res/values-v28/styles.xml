@@ -75,4 +75,26 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textFontWeight">330</item>
     </style>
+
+    <style name="ProgressStyle">
+        <item name="android:fontFamily">@font/mi_sans_normal</item>
+        <item name="android:textColor">#B2FFFFFF</item>
+        <item name="android:textSize">7sp</item>
+        <item name="android:textFontWeight">380</item>
+    </style>
+
+    <style name="PlayerTitleStyle">
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/mi_sans_bold</item>
+        <item name="android:textColor">#E5FFFFFF</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textFontWeight">330</item>
+    </style>
+
+    <style name="PlayerAuthorStyle">
+        <item name="android:fontFamily">@font/mi_sans_normal</item>
+        <item name="android:textColor">#B2FFFFFF</item>
+        <item name="android:textFontWeight">330</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

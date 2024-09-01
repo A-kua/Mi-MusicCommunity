@@ -9,7 +9,7 @@ android {
     compileSdk = extra["targetSdk"] as Int
 
     defaultConfig {
-        applicationId =  "fan.akua.exam"
+        applicationId = "fan.akua.exam"
         minSdk = extra["minSdk"] as Int
         targetSdk = extra["targetSdk"] as Int
         versionCode = extra["versionCode"] as Int
@@ -45,6 +45,8 @@ android {
 }
 
 dependencies {
+    implementation("com.sothree.slidinguppanel:library:3.4.0")
+    implementation("androidx.palette:palette:1.0.0")
     debugImplementation(libs.leakcanary.android)
     implementation(libs.androidx.paging.runtime.ktx)
 
