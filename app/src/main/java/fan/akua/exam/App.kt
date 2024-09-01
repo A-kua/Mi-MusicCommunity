@@ -9,7 +9,7 @@ import com.drake.statelayout.StateConfig
 import com.tencent.mmkv.BuildConfig
 import com.tencent.mmkv.MMKV
 import fan.akua.exam.services.MusicPlayerService
-import fan.akua.exam.utils.logD
+import fan.akua.exam.misc.utils.logD
 
 
 class App : Application() {

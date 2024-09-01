@@ -1,4 +1,4 @@
-package fan.akua.exam.api
+package fan.akua.exam.data.api
 
 import fan.akua.exam.Constants
 import fan.akua.exam.data.ApiResponse

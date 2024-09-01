@@ -1,4 +1,4 @@
-package fan.akua.exam.fragments
+package fan.akua.exam.activities.main.fragments
 
 import android.animation.ValueAnimator
 import android.os.Bundle
@@ -6,11 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import fan.akua.exam.AppState
+import fan.akua.exam.activities.main.MainViewModel
+import fan.akua.exam.activities.main.fragments.player.PageMode
 import fan.akua.exam.databinding.FragmentImageBinding
-import fan.akua.exam.databinding.FragmentPlayerBinding
 import fan.akua.exam.player.PlayerManager
 import kotlinx.coroutines.launch
 
@@ -46,7 +48,7 @@ class ImageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.img.setOnClickListener {
             lifecycleScope.launch {
-                AppState.switchPage(false)
+                AppState.switchPage(PageMode.Lyric)
             }
         }
         lifecycleScope.launch {

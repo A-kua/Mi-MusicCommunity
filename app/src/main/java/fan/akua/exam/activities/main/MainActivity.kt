@@ -1,5 +1,8 @@
 package fan.akua.exam.activities.main
 
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -18,22 +21,26 @@ import com.drake.brv.utils.setup
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.BezierRadarHeader
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.INVISIBLE
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
-import fan.akua.exam.AppState
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.VISIBLE
 import fan.akua.exam.R
 import fan.akua.exam.activities.main.model.BannerModel
 import fan.akua.exam.activities.main.model.GridModel
 import fan.akua.exam.activities.main.model.HeaderModel
 import fan.akua.exam.activities.main.model.LargeCardModel
 import fan.akua.exam.activities.main.model.TitleModel
+import fan.akua.exam.misc.anims.AkuaItemAnimation
 import fan.akua.exam.databinding.ActivityMainBinding
-import fan.akua.exam.fragments.PlayerFragment
-import fan.akua.exam.player.PlayerManager
-import fan.akua.exam.utils.akuaEdgeToEdge
-import fan.akua.exam.utils.logD
+import fan.akua.exam.activities.main.fragments.player.PlayerFragment
+import fan.akua.exam.misc.utils.akuaEdgeToEdge
 import kotlinx.coroutines.launch
 
-
+/**
+ * MVI架构，Activity只负责接收用户点击UI发出的Intent，以及ViewModel发生的Event。
+ * 收到Intent后，交给ViewModel，由ViewModel更新数据，然后发出Event。
+ * 关注点分离，单一数据源，唯一可信源。
+ */
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
@@ -46,63 +53,129 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // 小细节哦~ 防止配置变更重新添加的
+        resumeChildFragment(savedInstanceState)
+
+        initialViews()
+        initialIntent()
+
+        lifecycleScope.launch {
+            viewModel.uiState.collect { (recyclerViewState, mainPanelState, slidingViewState) ->
+                parseRecyclerViewState(recyclerViewState)
+                parseMainPanelState(mainPanelState)
+                parseSlidingViewState(slidingViewState)
+            }
+        }
+
+    }
+
+    /**
+     * 尝试恢复Fragment
+     */
+    private fun resumeChildFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
             fragment = PlayerFragment()
             supportFragmentManager.beginTransaction()
                 .setReorderingAllowed(true)
-                .add(R.id.fragmentHost, fragment, fragment.javaClass.name)
+                .add(R.id.fragmentHost, fragment, PlayerFragment::class.qualifiedName)
                 .hide(fragment)
                 .commit()
         } else {
             fragment =
-                supportFragmentManager.findFragmentByTag(fragment.javaClass.name) as PlayerFragment
+                supportFragmentManager.findFragmentByTag(PlayerFragment::class.qualifiedName) as PlayerFragment
         }
+    }
 
-        initialViewState()
-        initialEvent()
-        initialPanel()
+    /**
+     * 处理RecyclerView的状态
+     */
+    private var previousRecyclerViewState: RecyclerViewState? = null
+    private fun parseRecyclerViewState(recyclerViewState: RecyclerViewState) {
+        if (previousRecyclerViewState != null)
+            if (previousRecyclerViewState == recyclerViewState) return
+        when (recyclerViewState.state) {
+            RequestState.LOADING -> {
 
-        lifecycleScope.launch {
-            viewModel.uiState.collect { uiState ->
-                when (uiState.state) {
-                    RequestState.SUCCESS -> {
-                        val toRVModels = uiState.toRVModels(resources = resources)
-                        if (binding.rv.models != null) {
-                            val merge = MainDataMerge.merge(
-                                binding.rv.bindingAdapter.models as List<ItemBind>,
-                                toRVModels
-                            )
-                            binding.rv.bindingAdapter.models = toRVModels
+            }
 
-                            merge.dispatchUpdatesTo(binding.rv.bindingAdapter)
-                        } else {
-                            binding.rv.bindingAdapter.models = toRVModels
-                        }
+            RequestState.SUCCESS -> {
+                stopRefreshAndLoad()
+                binding.state.showContent()
+            }
 
-                        stopRefreshAndLoad()
-                        binding.state.showContent()
-                    }
+            RequestState.ERROR -> {
+                stopRefreshAndLoad()
+                binding.state.showError()
+            }
 
-                    RequestState.ERROR -> {
-                        stopRefreshAndLoad()
-                        binding.state.showError()
-                    }
+            RequestState.Initial -> {
+                viewModel.loadNextPage()
+            }
 
-                    RequestState.LOADING -> {
-
-                    }
-
-                    RequestState.Initial -> {
-                        viewModel.loadNextPage()
-                    }
-
-                    RequestState.All -> {
-                        binding.swipe.setEnableRefresh(true)
-                        binding.swipe.setEnableLoadMore(false)
-                    }
-                }
+            RequestState.All -> {
+                binding.swipe.setEnableRefresh(true)
+                binding.swipe.setEnableLoadMore(false)
             }
         }
+
+        val toRVModels = recyclerViewState.toRVModels(resources = resources)
+        if (binding.rv.models != null) {
+            val merge = MainDataMerge.merge(
+                binding.rv.bindingAdapter.models as List<ItemBind>,
+                toRVModels
+            )
+            binding.rv.bindingAdapter.models = toRVModels
+
+            merge.dispatchUpdatesTo(binding.rv.bindingAdapter)
+        } else {
+            binding.rv.bindingAdapter.models = toRVModels
+        }
+        stopRefreshAndLoad()
+        binding.state.showContent()
+        previousRecyclerViewState = recyclerViewState
+    }
+
+    /**
+     * 处理SlidingLayout的状态
+     */
+    private var previousSlidingViewState: SlidingViewState? = null
+    private fun parseSlidingViewState(slidingViewState: SlidingViewState) {
+        if (previousSlidingViewState != null)
+            if (previousSlidingViewState == slidingViewState) return
+        if (binding.slidingLayout.panelState != slidingViewState.state) {
+            binding.slidingLayout.panelState = slidingViewState.state
+        }
+        previousSlidingViewState = slidingViewState
+    }
+
+    /**
+     * 处理Panel的状态
+     */
+    private var previousMainPanelState: MainPanelState? = null
+    private fun parseMainPanelState(panelState: MainPanelState) {
+        if (previousMainPanelState != null)
+            if (previousMainPanelState == panelState) return
+
+        if (panelState.visible) {
+            binding.panel.root.visibility = VISIBLE
+        } else {
+            binding.panel.root.visibility = INVISIBLE
+        }
+
+        panelState.bitmap?.let {
+            binding.panel.root.findViewById<ImageView>(R.id.panel_img)
+                .setImageBitmap(it)
+        }
+
+        binding.panel.root.findViewById<ImageButton>(R.id.panel_play_pause)
+            .setImageResource(if (panelState.isPause) R.drawable.ic_pausing else R.drawable.ic_playing)
+
+        panelState.songBean?.let {
+            binding.panel.root.findViewById<TextView>(R.id.panel_music_name).text =
+                it.songName
+            binding.panel.root.findViewById<TextView>(R.id.panel_music_author).text =
+                it.author
+        }
+        previousMainPanelState = panelState
     }
 
     override fun onBackPressed() {
@@ -122,7 +195,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initialViewState() {
+    /**
+     * 初始化View
+     */
+    private fun initialViews() {
         binding.rv.grid(spanCount = 2).setup {
             addType<HeaderModel>(R.layout.item_type_header)
             addType<BannerModel>(R.layout.item_type_banner)
@@ -148,30 +224,7 @@ class MainActivity : AppCompatActivity() {
         binding.rv.bindingAdapter.addHeader(HeaderModel(), animation = true)
         binding.rv.bindingAdapter.setAnimation(AkuaItemAnimation())
         binding.rv.bindingAdapter.animationRepeat = true
-    }
 
-    private fun initialEvent() {
-        binding.swipe.setOnRefreshListener {
-            viewModel.refresh()
-        }
-
-        binding.swipe.setOnLoadMoreListener {
-            viewModel.loadNextPage()
-        }
-
-        lifecycleScope.launch {
-            AppState.openFlow.collect {
-                binding.slidingLayout.panelState = PanelState.EXPANDED
-            }
-        }
-        lifecycleScope.launch {
-            AppState.closeFlow.collect {
-                binding.slidingLayout.panelState = PanelState.COLLAPSED
-            }
-        }
-    }
-
-    private fun initialPanel() {
         binding.slidingLayout.addPanelSlideListener(object :
             SlidingUpPanelLayout.PanelSlideListener {
             override fun onPanelSlide(panel: View, slideOffset: Float) {
@@ -190,47 +243,38 @@ class MainActivity : AppCompatActivity() {
                         supportFragmentManager.beginTransaction()
                             .setReorderingAllowed(true)
                             .show(fragment)
-                            .commit();
+                            .commit()
                     }
                     // 全部展开，隐藏panel
                 } else if (previousState == PanelState.DRAGGING && newState == PanelState.EXPANDED) {
-                    binding.panel.root.visibility = View.INVISIBLE
+                    viewModel.panelHide()
+                    viewModel.slidingShow()
                     // 全部收起，隐藏fragment
                 } else if (previousState == PanelState.DRAGGING && newState == PanelState.COLLAPSED) {
                     supportFragmentManager.beginTransaction()
                         .setReorderingAllowed(true)
                         .hide(fragment)
                         .commit()
+                    viewModel.slidingHide()
                     // 开始收起，展示panel
                 } else if (previousState == PanelState.EXPANDED && newState == PanelState.DRAGGING) {
-                    binding.panel.root.visibility = View.VISIBLE
+                    viewModel.panelShow()
                 }
             }
         })
+    }
 
-        lifecycleScope.launch {
-            PlayerManager.bitmapFlow.collect { bitmap ->
-                bitmap?.let {
-                    binding.panel.root.findViewById<ImageView>(R.id.panel_img)
-                        .setImageBitmap(bitmap)
-                }
-            }
+    /**
+     * 初始化主动意图
+     */
+    private fun initialIntent() {
+        binding.swipe.setOnRefreshListener {
+            viewModel.refresh()
         }
-        lifecycleScope.launch {
-            PlayerManager.pause.collect { isPause ->
-                binding.panel.root.findViewById<ImageButton>(R.id.panel_play_pause)
-                    .setImageResource(if (isPause) R.drawable.ic_pausing else R.drawable.ic_playing)
-            }
-        }
-        lifecycleScope.launch {
-            PlayerManager.currentSong.collect { song ->
-                song?.let {
-                    binding.panel.root.findViewById<TextView>(R.id.panel_music_name).text =
-                        it.songName
-                    binding.panel.root.findViewById<TextView>(R.id.panel_music_author).text =
-                        it.author
-                }
-            }
+
+        binding.swipe.setOnLoadMoreListener {
+            viewModel.loadNextPage()
         }
     }
+
 }

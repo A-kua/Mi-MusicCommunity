@@ -1,4 +1,4 @@
-package fan.akua.exam.utils
+package fan.akua.exam.misc.utils
 
 import android.content.Context
 import android.media.AudioAttributes

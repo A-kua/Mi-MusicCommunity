@@ -5,14 +5,10 @@ import com.bumptech.glide.Glide
 import com.drake.brv.BindingAdapter
 import com.drake.brv.item.ItemBind
 import fan.akua.exam.AppState
-import fan.akua.exam.R
 import fan.akua.exam.data.MusicInfo
-import fan.akua.exam.data.toSongBean
 import fan.akua.exam.databinding.ItemTypeGridBinding
-import fan.akua.exam.events.ClickMusic
-import fan.akua.exam.player.PlayerManager
-import fan.akua.exam.utils.dp
-import fan.akua.exam.utils.logD
+import fan.akua.exam.activities.main.intents.PlayMusicIntent
+import fan.akua.exam.misc.utils.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,8 +30,11 @@ class GridModel(val musicInfo: MusicInfo, val spanCount: Int) : ItemBind {
 
 
         binding.root.setOnClickListener {
+            /**
+             * 无法与ViewModel通信，需要借助热流。
+             */
             CoroutineScope(Dispatchers.Main).launch {
-                AppState.clickMusic(ClickMusic(musicInfo = musicInfo))
+                AppState.clickMusic(PlayMusicIntent(musicInfo = musicInfo))
             }
         }
         binding.playButton.setOnClickListener {

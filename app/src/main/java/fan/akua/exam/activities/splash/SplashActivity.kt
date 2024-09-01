@@ -22,14 +22,16 @@ import com.drake.spannable.span.HighlightSpan
 import fan.akua.exam.R
 import fan.akua.exam.activities.main.MainActivity
 import fan.akua.exam.databinding.ActivitySplashBinding
-import fan.akua.exam.utils.MMKVDelegate
+import fan.akua.exam.misc.utils.MMKVDelegate
 
 
 @SuppressLint("CustomSplashScreen")
 // 不适配安卓12的Splash了
 class SplashActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivitySplashBinding
     private var agreed by MMKVDelegate("agreed", false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
@@ -40,7 +42,6 @@ class SplashActivity : AppCompatActivity() {
             else
                 showTermsDialog()
         }, 2 * 1000)
-//        }, 2 )
     }
 
     private fun jumpActivity() {

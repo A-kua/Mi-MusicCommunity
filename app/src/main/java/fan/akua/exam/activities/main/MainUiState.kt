@@ -1,7 +1,9 @@
 package fan.akua.exam.activities.main
 
 import android.content.res.Resources
+import android.graphics.Bitmap
 import com.drake.brv.item.ItemBind
+import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import fan.akua.exam.R
 import fan.akua.exam.activities.main.model.BannerModel
 import fan.akua.exam.activities.main.model.GridModel
@@ -9,16 +11,33 @@ import fan.akua.exam.activities.main.model.LargeCardModel
 import fan.akua.exam.activities.main.model.TitleModel
 import fan.akua.exam.data.HomePageInfo
 import fan.akua.exam.data.MusicInfo
+import fan.akua.exam.data.SongBean
 
 /**
- * 为MusicInfo加入了type字段，1Banner；2横滑大卡；3一行一列；4；一行两列
  * BannerModel需要List<MusicInfo>
  * LargeCardModel需要HomePageInfo
  */
-data class MainUiState(
+data class RecyclerViewState(
     val banner: List<MusicInfo> = emptyList(),
     val items: List<HomePageInfo> = emptyList(),
     val state: RequestState = RequestState.Initial
+)
+
+data class MainPanelState(
+    val bitmap: Bitmap?,
+    val isPause: Boolean,
+    val songBean: SongBean?,
+    val visible: Boolean,
+)
+
+data class SlidingViewState(
+    val state: SlidingUpPanelLayout.PanelState
+)
+
+data class MainUiState(
+    val recyclerViewState: RecyclerViewState,
+    val panelState: MainPanelState,
+    val slidingViewState: SlidingViewState
 )
 
 enum class RequestState {
@@ -32,7 +51,7 @@ enum class RequestState {
 /**
  * 对Banner采用合并，对其他采用转换
  */
-fun MainUiState.toRVModels(resources: Resources): List<ItemBind> {
+fun RecyclerViewState.toRVModels(resources: Resources): List<ItemBind> {
     val largeModels = items.filter { it.style == 2 }.map { LargeCardModel(it) }
 
     val gridModels = items.filter { it.style != 2 }.map { Pair(it.style, it.musicInfoList) }

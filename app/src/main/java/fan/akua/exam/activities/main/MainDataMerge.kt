@@ -5,7 +5,7 @@ import com.drake.brv.item.ItemBind
 import fan.akua.exam.activities.main.model.BannerModel
 import fan.akua.exam.activities.main.model.GridModel
 import fan.akua.exam.activities.main.model.LargeCardModel
-import fan.akua.exam.utils.areListsEqual
+import fan.akua.exam.misc.utils.areListsEqual
 
 object MainDataMerge {
     fun merge(old: List<ItemBind?>, naw: List<ItemBind?>): DiffUtil.DiffResult {

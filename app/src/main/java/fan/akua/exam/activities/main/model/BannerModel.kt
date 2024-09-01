@@ -7,7 +7,8 @@ import com.youth.banner.indicator.CircleIndicator
 import fan.akua.exam.activities.main.adapters.MainBannerAdapter
 import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.databinding.ItemTypeBannerBinding
-import fan.akua.exam.utils.GenericDiffUtil
+import fan.akua.exam.misc.utils.GenericDiffUtil
+import fan.akua.exam.misc.utils.logD
 
 class BannerModel(val data: List<MusicInfo>) : ItemBind {
     override fun onBind(vh: BindingAdapter.BindingViewHolder) {
@@ -26,8 +27,9 @@ class BannerModel(val data: List<MusicInfo>) : ItemBind {
                     oldItem.coverUrl == newItem.coverUrl
                 }
             )
-            val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
+            val diffResult = DiffUtil.calculateDiff(diffUtilCallback, false)
             adapter.data = data
+            adapter.setDatas(data)
             diffResult.dispatchUpdatesTo(adapter)
         }
 

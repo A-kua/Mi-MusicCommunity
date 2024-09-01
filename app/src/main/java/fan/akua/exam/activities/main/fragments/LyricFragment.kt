@@ -1,4 +1,4 @@
-package fan.akua.exam.fragments
+package fan.akua.exam.activities.main.fragments
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -9,12 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.dirror.lyricviewx.OnPlayClickListener
-import com.dirror.lyricviewx.OnSingleClickListener
 import fan.akua.exam.AppState
+import fan.akua.exam.activities.main.fragments.player.PageMode
 import fan.akua.exam.databinding.FragmentLyricBinding
 import fan.akua.exam.player.PlayerManager
-import fan.akua.exam.utils.logD
+import fan.akua.exam.misc.utils.logD
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -59,7 +58,7 @@ class LyricFragment : Fragment() {
             if (event?.action == MotionEvent.ACTION_UP)
                 lifecycleScope.launch {
                     "simon".logD("event")
-                    AppState.switchPage(true)
+                    AppState.switchPage(PageMode.Image)
                 }
             return@setOnTouchListener true
         }

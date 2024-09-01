@@ -7,8 +7,8 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import fan.akua.exam.App
 import fan.akua.exam.data.SongBean
-import fan.akua.exam.utils.areListsEqual
-import fan.akua.exam.utils.logD
+import fan.akua.exam.misc.utils.areListsEqual
+import fan.akua.exam.misc.utils.logD
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.random.Random

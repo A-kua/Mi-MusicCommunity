@@ -1,4 +1,4 @@
-package fan.akua.exam.utils
+package fan.akua.exam.misc.utils
 
 import androidx.recyclerview.widget.DiffUtil
 

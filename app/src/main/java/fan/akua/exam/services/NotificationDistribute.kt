@@ -13,7 +13,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.media.session.MediaButtonReceiver
 import fan.akua.exam.R
 import fan.akua.exam.data.SongBean
-import fan.akua.exam.utils.logD
+import fan.akua.exam.misc.utils.logD
 
 /**
  * MusicPlayerService的一个模块，负责创建通知。

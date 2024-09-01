@@ -3,7 +3,7 @@ package fan.akua.exam.player
 import TimerManager
 import android.media.MediaPlayer
 import fan.akua.exam.data.SongBean
-import fan.akua.exam.utils.logD
+import fan.akua.exam.misc.utils.logD
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

@@ -1,4 +1,4 @@
-package fan.akua.exam.utils
+package fan.akua.exam.misc.utils
 
 import android.util.Log
 import fan.akua.exam.BuildConfig

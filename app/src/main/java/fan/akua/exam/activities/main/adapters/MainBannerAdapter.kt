@@ -11,6 +11,7 @@ import com.youth.banner.adapter.BannerAdapter
 import fan.akua.exam.R
 import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.databinding.ItemBannerBinding
+import fan.akua.exam.misc.utils.logD
 
 
 class MainBannerAdapter(var data: List<MusicInfo>) :

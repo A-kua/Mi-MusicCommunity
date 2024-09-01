@@ -14,8 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media.session.MediaButtonReceiver
 import fan.akua.exam.activities.main.MainActivity
 import fan.akua.exam.player.PlayerManager
-import fan.akua.exam.utils.AudioFocusUtils
-import fan.akua.exam.utils.logD
+import fan.akua.exam.misc.utils.AudioFocusUtils
+import fan.akua.exam.misc.utils.logD
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch

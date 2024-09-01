@@ -1,4 +1,4 @@
-package fan.akua.exam.utils;
+package fan.akua.exam.misc.utils;
 
 
 import android.animation.Animator;
@@ -27,6 +27,13 @@ public class AnimatorUtils {
         if (targetLayout.getAnimation() != null)
             targetLayout.getAnimation().cancel();
         targetLayout.clearAnimation();
+
+        targetLayout.setTranslationY(0);
+        targetLayout.setTranslationX(0);
+        targetLayout.setRotationX(0);
+        targetLayout.setScaleX(1.0F);
+        targetLayout.setScaleY(1.0F);
+
         targetLayout.setPivotY(getDistanceToCenter(targetLayout));
         targetLayout.setPivotX(getDistanceToCenterX(targetLayout));
         targetLayout.setCameraDistance(10000.0F * targetLayout.getResources().getDisplayMetrics().density);

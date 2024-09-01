@@ -1,4 +1,4 @@
-package fan.akua.exam.utils
+package fan.akua.exam.misc.utils
 
 fun <T> List<T>.areListsEqual(list2: List<T>, areContentsTheSame: (T, T) -> Boolean): Boolean {
     if (size != list2.size) {

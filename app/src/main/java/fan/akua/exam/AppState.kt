@@ -1,35 +1,38 @@
 package fan.akua.exam
 
-import fan.akua.exam.events.ClickMusic
-import fan.akua.exam.events.CloseMusic
-import fan.akua.exam.events.OpenMusic
-import fan.akua.exam.events.SwitchPage
+import fan.akua.exam.activities.main.fragments.player.PageMode
+import fan.akua.exam.activities.main.intents.PlayMusicIntent
+import fan.akua.exam.activities.main.intents.ClosePlayerPageIntent
+import fan.akua.exam.activities.main.intents.SwitchPageIntent
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 object AppState {
-    private val _openFlow = MutableSharedFlow<OpenMusic>()
-    val openFlow = _openFlow.asSharedFlow()
-    private val _closeFlow = MutableSharedFlow<CloseMusic>()
-    val closeFlow = _closeFlow.asSharedFlow()
-    private val _switchPageFlow = MutableSharedFlow<SwitchPage>()
-    val switchPageFlow = _switchPageFlow.asSharedFlow()
-    private val _clickMusicFlow = MutableSharedFlow<ClickMusic>()
-    val clickMusicFlow = _clickMusicFlow.asSharedFlow()
+    private val _closePlayerPageIntent = MutableSharedFlow<ClosePlayerPageIntent>()
+    val closePlayerPageIntent = _closePlayerPageIntent.asSharedFlow()
+    private val _switchPageIntent = MutableSharedFlow<SwitchPageIntent>()
+    val switchPageIntent = _switchPageIntent.asSharedFlow()
+    private val _playMusicIntentIntent = MutableSharedFlow<PlayMusicIntent>()
+    val clickMusicIntent = _playMusicIntentIntent.asSharedFlow()
 
-    suspend fun openMusic() {
-        _openFlow.emit(OpenMusic())
+    /**
+     * 关闭播放页面
+     */
+    suspend fun closePlayerPage() {
+        _closePlayerPageIntent.emit(ClosePlayerPageIntent())
     }
 
-    suspend fun closeMusic() {
-        _closeFlow.emit(CloseMusic())
+    /**
+     * 切换播放器页面
+     */
+    suspend fun switchPage(page: PageMode) {
+        _switchPageIntent.emit(SwitchPageIntent(page))
     }
 
-    suspend fun switchPage(showImage: Boolean) {
-        _switchPageFlow.emit(SwitchPage(showImage))
-    }
-
-    suspend fun clickMusic(clickMusic: ClickMusic) {
-        _clickMusicFlow.emit(clickMusic)
+    /**
+     * 点击音乐
+     */
+    suspend fun clickMusic(playMusicIntent: PlayMusicIntent) {
+        _playMusicIntentIntent.emit(playMusicIntent)
     }
 }

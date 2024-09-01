@@ -13,17 +13,13 @@ import com.drake.brv.utils.linear
 import com.drake.brv.utils.setup
 import fan.akua.exam.AppState
 import fan.akua.exam.R
-import fan.akua.exam.activities.main.AkuaItemAnimation
+import fan.akua.exam.misc.anims.AkuaItemAnimation
 import fan.akua.exam.data.HomePageInfo
 import fan.akua.exam.data.MusicInfo
-import fan.akua.exam.data.SongBean
-import fan.akua.exam.data.toSongBean
 import fan.akua.exam.databinding.ItemLargecardBinding
 import fan.akua.exam.databinding.ItemTypeLargecardBinding
-import fan.akua.exam.events.ClickMusic
-import fan.akua.exam.player.PlayerManager
-import fan.akua.exam.utils.GenericDiffUtil
-import fan.akua.exam.utils.logD
+import fan.akua.exam.activities.main.intents.PlayMusicIntent
+import fan.akua.exam.misc.utils.GenericDiffUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,8 +69,11 @@ class LargeCardModel(val data: HomePageInfo) : ItemBind {
                     }
                 }
                 onClick(R.id.parentCardView) {
+                    /**
+                     * 无法与ViewModel通信，需要借助热流。
+                     */
                     CoroutineScope(Dispatchers.Main).launch {
-                        AppState.clickMusic(ClickMusic(musicInfo = getModel()))
+                        AppState.clickMusic(PlayMusicIntent(musicInfo = getModel()))
                     }
                 }
             }.models = data.musicInfoList
