@@ -71,16 +71,16 @@ object PlayerManager {
             _currentSong.value = it
             androidMusicPlayer.setBean(song)
             waitForPrepare = true
-
             "simon".logD("startPlay " + song.songName)
 
             // 如果有当前请求，取消它
             currentRequest?.let {
-                Glide.with(App.context).clear(it)
+                Glide.with(App.context).clear(currentRequest)
             }
 
             currentRequest = object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    "bug15-51".logD("bitmap? $resource")
                     _bitmapFlow.value = resource.copy(Bitmap.Config.ARGB_8888, false)
                 }
 

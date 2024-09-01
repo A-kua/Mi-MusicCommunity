@@ -52,6 +52,7 @@ class MainViewModel : ViewModel() {
 
     private fun playSong(musicInfo: MusicInfo) {
         viewModelScope.launch {
+            "MainViewModel".logD("start play")
             val state = _uiState.value
             var position = 0
             val musicList = state.items.first {
@@ -61,6 +62,7 @@ class MainViewModel : ViewModel() {
                 it.toSongBean()
             }
             if (position == -1) return@launch
+            "MainViewModel".logD("call play")
             PlayerManager.play(musicList, position)
 
             CoroutineScope(Dispatchers.Main).launch {

@@ -136,7 +136,7 @@ class MusicPlayerService : LifecycleService(), AudioFocusUtils.OnAudioFocusChang
                 }
             }
         } else {
-//            mNotificationManager!!.notify(NOTIFICATION_ID, mMusicNotification!!.build())
+            mNotificationManager!!.notify(NOTIFICATION_ID, mMusicNotification!!.build())
         }
     }
 

@@ -99,8 +99,7 @@ public class FlowView extends View {
      */
     public void setBitmap(Bitmap bitmap) {
         Palette.from(bitmap).generate(palette -> {
-            // 提取颜色
-            assert palette != null;
+            if (palette == null) return;
             int lightColor1 = palette.getLightVibrantSwatch() != null ? palette.getLightVibrantSwatch().getRgb() : Color.GRAY;
             int lightColor2 = palette.getLightMutedSwatch() != null ? palette.getLightMutedSwatch().getRgb() : lightColor1;
             int vibrantColor = palette.getVibrantSwatch() != null ? palette.getVibrantSwatch().getRgb() : lightColor2;
@@ -113,16 +112,15 @@ public class FlowView extends View {
             flowColor[2] = lightColor2;
             flowColor[3] = mutedColor;
             flowColor[4] = darkColor;
+            // 初始化渐变
+            for (int i = 0; i < gradients.length; i++) {
+                gradients[i] = createSignalColorGradient(flowColor[i], vMax);
+            }
+
+            newBackGroundColor = backgroundColor;
+
+            startAnimator();
         });
-
-        // 初始化渐变
-        for (int i = 0; i < gradients.length; i++) {
-            gradients[i] = createSignalColorGradient(flowColor[i], vMax);
-        }
-
-        newBackGroundColor = backgroundColor;
-
-        startAnimator();
     }
 
     /**
@@ -141,6 +139,8 @@ public class FlowView extends View {
     }
 
     private static RadialGradient createSignalColorGradient(int color, float radius) {
+        if (radius <= 0)
+            radius = 1;
         return new RadialGradient(radius / 2, radius / 2, radius / 2, color | 0xFF000000, Color.TRANSPARENT, Shader.TileMode.MIRROR);
     }
 
