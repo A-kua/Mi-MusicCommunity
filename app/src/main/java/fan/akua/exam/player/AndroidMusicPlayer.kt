@@ -40,6 +40,7 @@ class AndroidMusicPlayer(
                 return@setOnErrorListener true
             }
             setOnCompletionListener {
+                "AndroidMusicPlayer".logD("completionListener")
                 completionListener?.invoke(this@AndroidMusicPlayer)
                 _pauseFlow.value = true
             }

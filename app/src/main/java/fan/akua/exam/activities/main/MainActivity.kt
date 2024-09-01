@@ -105,6 +105,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        if (binding.slidingLayout.panelState == PanelState.EXPANDED) {
+            binding.slidingLayout.panelState = PanelState.COLLAPSED
+            return
+        }
+        super.onBackPressed()
+    }
+
     private fun stopRefreshAndLoad() {
         if (binding.swipe.isRefreshing) {
             binding.swipe.finishRefresh()
@@ -139,7 +147,7 @@ class MainActivity : AppCompatActivity() {
         // 添加头部搜索
         binding.rv.bindingAdapter.addHeader(HeaderModel(), animation = true)
         binding.rv.bindingAdapter.setAnimation(AkuaItemAnimation())
-        binding.rv.bindingAdapter.animationRepeat=true
+        binding.rv.bindingAdapter.animationRepeat = true
     }
 
     private fun initialEvent() {

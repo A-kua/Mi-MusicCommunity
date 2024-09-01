@@ -26,6 +26,8 @@ class PlayerFragment : Fragment() {
     private lateinit var imageFragment: ImageFragment
     private lateinit var lyricFragment: LyricFragment
 
+    private var isTouching = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -83,16 +85,17 @@ class PlayerFragment : Fragment() {
     }
 
     private fun eventRegister(binding: FragmentPlayerBinding) {
-        binding.progressBar.setOnSeekBarChangeListener(object :OnSeekBarChangeListener{
+        binding.progressBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
 
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
-
+                isTouching = true
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
+                isTouching = false
                 PlayerManager.seekTo(seekBar.progress.toLong())
             }
 
@@ -175,6 +178,7 @@ class PlayerFragment : Fragment() {
         }
         lifecycleScope.launch {
             PlayerManager.progress.collect { progress ->
+                if (isTouching)return@collect
                 binding.currentTime.text = progress.formatSecondsToTime()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     binding.progressBar.setProgress(progress.toInt(), false)

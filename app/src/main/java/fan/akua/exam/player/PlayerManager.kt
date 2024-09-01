@@ -30,10 +30,14 @@ object PlayerManager {
 
             },
             preparedListener = { iPlayer, songBean ->
+                "AndroidMusicPlayer".logD("prepare")
                 if (waitForPrepare)
                     waitForPrepare = false
             },
-            completionListener = completionListener
+            completionListener = {
+                "AndroidMusicPlayer".logD("completionListener222")
+                playNext()
+            }
         )
     }
 
@@ -153,8 +157,5 @@ object PlayerManager {
         androidMusicPlayer.seekTo(long)
     }
 
-    private val completionListener: ((IPlayer<SongBean>) -> Unit) = { _ ->
-        playNext()
-    }
 
 }
