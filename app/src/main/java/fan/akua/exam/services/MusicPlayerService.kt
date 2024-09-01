@@ -92,7 +92,7 @@ class MusicPlayerService : LifecycleService(), AudioFocusUtils.OnAudioFocusChang
             }.launchIn(lifecycleScope)
 
             PlayerManager.pause.onEach {
-                mMusicNotification?.setPlaying(it)
+                mMusicNotification?.setPlaying(!it)
                 refreshMediaNotifications()
 
                 if (!it) {
