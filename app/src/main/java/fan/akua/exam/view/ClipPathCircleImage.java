@@ -75,4 +75,14 @@ public class ClipPathCircleImage extends AppCompatImageView {
             isAnimating = true;
         }
     }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        if (animator != null) {
+            animator.cancel();
+            animator.removeAllListeners();
+            animator = null;
+        }
+        super.onDetachedFromWindow();
+    }
 }
