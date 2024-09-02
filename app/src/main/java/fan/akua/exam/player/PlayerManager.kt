@@ -145,7 +145,9 @@ object PlayerManager {
 
             PlayMode.LIST_LOOP -> {
                 val index = _indexFlow.value + 1
-                internalPlay(index)
+                _playList.value?.let {
+                    internalPlay(index % it.size)
+                }
             }
 
             PlayMode.RANDOM -> {
@@ -169,8 +171,13 @@ object PlayerManager {
     }
 
     fun playLast() {
-        val index = _indexFlow.value - 1
-        internalPlay(index)
+        _playList.value?.let {
+            if (_indexFlow.value == 0) {
+                internalPlay(it.size - 1)
+            } else {
+                internalPlay(_indexFlow.value - 1)
+            }
+        }
     }
 
     fun seekTo(long: Long) {

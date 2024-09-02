@@ -22,4 +22,4 @@
 
 # 坏事的东西
 -keep class fan.akua.exam.data.** { *; }
--keep class fan.akua.exam.api.** { *; }
+-keep class fan.akua.exam.activities.main.intents.** { *; }
