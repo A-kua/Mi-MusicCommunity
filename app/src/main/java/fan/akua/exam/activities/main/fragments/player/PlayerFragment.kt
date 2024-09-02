@@ -123,10 +123,15 @@ class PlayerFragment : Fragment() {
             }
         }
         playerPanelState.songBean?.let {
-            "performance".logD("PlayerFragment likeView updateLike")
-            //todo 性能优化
-            binding.like.tag = it.like
-            binding.like.setImageResource(if (it.like) R.drawable.ic_like else R.drawable.ic_unlike)
+            if (binding.like.tag == null) {
+                binding.like.tag = it.like
+                "performance".logD("PlayerFragment likeView updateLike")
+                binding.like.setImageResource(if (it.like) R.drawable.ic_like else R.drawable.ic_unlike)
+            } else if (binding.like.tag as Boolean != it.like) {
+                binding.like.tag = it.like
+                "performance".logD("PlayerFragment likeView updateLike")
+                binding.like.setImageResource(if (it.like) R.drawable.ic_like else R.drawable.ic_unlike)
+            }
         }
         if (previousPlayerPanelState?.duration != playerPanelState.duration)
             playerPanelState.duration.run {
@@ -149,8 +154,9 @@ class PlayerFragment : Fragment() {
 
     private var previousPlayerPageState: PlayerPageState? = null
     private fun parsePlayerPageState(playerPageState: PlayerPageState) {
+        if (previousPlayerPageState != null)
+            if (previousPlayerPageState?.page == playerPageState.page) return
         "performance".logD("PlayerPage change")
-        //todo 性能优化
         when (playerPageState.page) {
             PageMode.Image -> childFragmentManager.beginTransaction()
                 .setReorderingAllowed(true)
