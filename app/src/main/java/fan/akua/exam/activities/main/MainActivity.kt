@@ -40,6 +40,7 @@ import fan.akua.exam.misc.GridItemDecoration
 import fan.akua.exam.misc.utils.akuaEdgeToEdge
 import fan.akua.exam.misc.utils.areListsEqual
 import fan.akua.exam.misc.utils.dp
+import fan.akua.exam.misc.utils.logD
 import kotlinx.coroutines.launch
 
 /**
@@ -98,6 +99,7 @@ class MainActivity : AppCompatActivity() {
     private fun parseRecyclerViewState(recyclerViewState: RecyclerViewState) {
         if (previousRecyclerViewState != null)
             if (previousRecyclerViewState == recyclerViewState) return
+
         when (recyclerViewState.state) {
             RequestState.LOADING -> {
 
@@ -122,11 +124,9 @@ class MainActivity : AppCompatActivity() {
                 binding.swipe.setEnableLoadMore(false)
             }
         }
-
         val toRVModels = recyclerViewState.toRVModels(resources = resources)
         binding.rv.bindingAdapter.setDifferModels(toRVModels, false)
-        stopRefreshAndLoad()
-        binding.state.showContent()
+
         previousRecyclerViewState = recyclerViewState
     }
 
@@ -138,32 +138,36 @@ class MainActivity : AppCompatActivity() {
         if (previousSlidingViewState != null)
             if (previousSlidingViewState == slidingViewState) return
         if (binding.slidingLayout == null) {
-            when (slidingViewState.state) {
-                PanelState.EXPANDED -> {
-                    if (fragment.isAdded && fragment.isHidden) {
+            if (previousSlidingViewState?.state!=slidingViewState.state) {
+                when (slidingViewState.state) {
+                    PanelState.EXPANDED -> {
+                        if (fragment.isAdded && fragment.isHidden) {
+                            supportFragmentManager.beginTransaction()
+                                .setReorderingAllowed(true)
+                                .show(fragment)
+                                .commit()
+                        }
+                        viewModel.panelHide()
+                    }
+
+                    PanelState.COLLAPSED -> {
                         supportFragmentManager.beginTransaction()
                             .setReorderingAllowed(true)
-                            .show(fragment)
+                            .hide(fragment)
                             .commit()
+                        viewModel.panelShow()
                     }
-                    viewModel.panelHide()
-                }
 
-                PanelState.COLLAPSED -> {
-                    supportFragmentManager.beginTransaction()
-                        .setReorderingAllowed(true)
-                        .hide(fragment)
-                        .commit()
-                    viewModel.panelShow()
+                    PanelState.ANCHORED, PanelState.HIDDEN, PanelState.DRAGGING -> {}
                 }
-
-                PanelState.ANCHORED, PanelState.HIDDEN, PanelState.DRAGGING -> {}
             }
 
         } else {
             binding.slidingLayout?.let {
-                if (it.panelState != slidingViewState.state) {
-                    it.panelState = slidingViewState.state
+                if (previousSlidingViewState?.state!=slidingViewState.state) {
+                    if (it.panelState != slidingViewState.state) {
+                        it.panelState = slidingViewState.state
+                    }
                 }
             }
         }
@@ -183,26 +187,31 @@ class MainActivity : AppCompatActivity() {
             if (previousMainPanelState == panelState) return
 
         binding.panel?.let { panel ->
-            if (panelState.visible) {
-                panel.root.visibility = VISIBLE
-            } else {
-                panel.root.visibility = INVISIBLE
+            if (previousMainPanelState?.visible!=panelState.visible) {
+                if (panelState.visible) {
+                    panel.root.visibility = VISIBLE
+                } else {
+                    panel.root.visibility = INVISIBLE
+                }
             }
-
             panelState.bitmap?.let {
-                panel.root.findViewById<ImageView>(R.id.panel_img)
-                    .setImageBitmap(it)
+                if (previousMainPanelState?.bitmap != panelState.bitmap) {
+                    panel.root.findViewById<ImageView>(R.id.panel_img)
+                        .setImageBitmap(it)
+                }
+            }
+            if (previousMainPanelState?.isPause != panelState.isPause) {
+                panel.root.findViewById<ImageButton>(R.id.panel_play_pause)
+                    .setImageResource(if (panelState.isPause) R.drawable.ic_pausing else R.drawable.ic_playing)
             }
 
-            panel.root.findViewById<ImageButton>(R.id.panel_play_pause)
-                .setImageResource(if (panelState.isPause) R.drawable.ic_pausing else R.drawable.ic_playing)
-
-            panelState.songBean?.let {
-                panel.root.findViewById<TextView>(R.id.panel_music_name).text =
-                    it.songName
-                panel.root.findViewById<TextView>(R.id.panel_music_author).text =
-                    "-${it.author}"
-            }
+            if (previousMainPanelState?.songBean != panelState.songBean)
+                panelState.songBean?.let {
+                    panel.root.findViewById<TextView>(R.id.panel_music_name).text =
+                        it.songName
+                    panel.root.findViewById<TextView>(R.id.panel_music_author).text =
+                        "-${it.author}"
+                }
         }
         previousMainPanelState = panelState
     }
