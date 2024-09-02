@@ -27,13 +27,15 @@ object PlayerManager {
     private val androidMusicPlayer: IPlayer<SongBean> by lazy {
         AndroidMusicPlayer(
             errorListener = {
-
+                "bug9-2".logD("error")
             },
             preparedListener = { iPlayer, songBean ->
+                "bug9-2".logD("prepare")
                 if (waitForPrepare)
                     waitForPrepare = false
             },
             completionListener = {
+                "bug9-2".logD("next")
                 playNext()
             }
         )
@@ -82,27 +84,39 @@ object PlayerManager {
         }
     }
 
-    fun removeSong(song: SongBean) {
+    fun removeSong(targetSong: SongBean) {
         val currentList = _playList.value ?: return
+        val currentSongBean = _currentSong.value
 
-        val updatedList = currentList.filter { it.id != song.id }
+        val updatedList = currentList.filter { it.id != targetSong.id }
         _playList.value = updatedList
 
-        if (updatedList.isNotEmpty())
-            when (_playMode.value) {
-                PlayMode.SINGLE_LOOP -> {
-                    internalPlay(_indexFlow.value)
-                }
+        // 如果删完为空，什么都不做
+        if (updatedList.isEmpty()) return
 
-                PlayMode.LIST_LOOP -> {
-//                    val index = _indexFlow.value + 1
-//                    internalPlay(index)
-                }
+        // 如果删完不为空，判断删除的是不是当前的，如果是则按规则播放下一个；如果不是，则更新index；
+        currentSongBean?.let { current ->
+            if (current.id == targetSong.id)
+                when (_playMode.value) {
+                    PlayMode.LIST_LOOP, PlayMode.SINGLE_LOOP -> {
+                        // 如果是最后一个，则播放第一个，否则还是当前这个下标
+                        val currentIndex = _indexFlow.value
+                        if (currentIndex == updatedList.size)
+                            internalPlay(0)
+                        else
+                            internalPlay(currentIndex)
+                    }
 
-                PlayMode.RANDOM -> {
-                    internalPlay(Random.nextInt(0, updatedList.size))
+                    PlayMode.RANDOM -> {
+                        internalPlay(Random.nextInt(0, updatedList.size))
+                    }
                 }
+            else {
+                _indexFlow.value = currentList.indexOfFirst { it.id == current.id }
+                "bug9-2".logD("index ${_indexFlow.value}")
             }
+        }
+
     }
 
     fun play(songBean: SongBean) {

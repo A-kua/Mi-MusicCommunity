@@ -28,12 +28,29 @@ class AndroidMusicPlayer(
     private fun resetState(mediaPlayer: MediaPlayer) {
         mediaPlayer.apply {
             reset()
+            "bug9-2".logD("reset")
             setOnPreparedListener {
                 preparedListener?.invoke(this@AndroidMusicPlayer, _songFlow.value)
                 if (_autoStart) this@AndroidMusicPlayer.start()
                 _durationFlow.value = this@AndroidMusicPlayer.getDuration()
             }
-            setOnErrorListener { _, _, _ ->
+            setOnErrorListener { mp, what, extra ->
+                val errorMessage = when (what) {
+                    MediaPlayer.MEDIA_ERROR_UNKNOWN -> "Unknown media error"
+                    MediaPlayer.MEDIA_ERROR_SERVER_DIED -> "Media server died"
+                    MediaPlayer.MEDIA_ERROR_IO -> "Input/output error"
+                    MediaPlayer.MEDIA_ERROR_MALFORMED -> "Malformed media"
+                    MediaPlayer.MEDIA_ERROR_UNSUPPORTED -> "Unsupported media"
+                    MediaPlayer.MEDIA_ERROR_TIMED_OUT -> "Timed out"
+                    else -> "Unhandled error code: $what"
+                }
+
+                val extraMessage = when (extra) {
+                    0 -> "No additional information"
+                    else -> "Additional error info: $extra"
+                }
+                "bug9-2".logD("$errorMessage - $extraMessage")
+
                 errorListener?.invoke(this@AndroidMusicPlayer)
                 _pauseFlow.value = true
                 return@setOnErrorListener true
@@ -62,6 +79,7 @@ class AndroidMusicPlayer(
     override var autoStart = _autoStart
 
     override fun setBean(bean: SongBean) {
+        "bug9-2".logD("setBean $bean")
         _songFlow.value = bean
         _pauseFlow.value = true
         _currentProgressFlow.value = 0

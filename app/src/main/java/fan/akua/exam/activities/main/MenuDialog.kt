@@ -65,8 +65,6 @@ class MenuDialog : SuperBottomSheetFragment() {
         }
         lifecycleScope.launch {
             PlayerManager.index.collect { index ->
-                binding.rv.bindingAdapter.notifyItemChanged(index)
-                binding.rv.bindingAdapter.notifyItemChanged(currentIndex)
                 currentIndex = index
             }
         }
@@ -130,9 +128,12 @@ class MenuDialog : SuperBottomSheetFragment() {
         if (previousList != null)
             if (previousList == playlist) return
         playlist?.let {
-            binding.rv.bindingAdapter.setDifferModels(playlist, false)
+            binding.rv.bindingAdapter.models = playlist
             if (it.size != previousList?.size) {
                 binding.playlistSize.text = "${playlist.size}"
+                if (previousList != null && it.isEmpty()) {
+                    dismissAllowingStateLoss()
+                }
             }
         }
         previousList = playlist
