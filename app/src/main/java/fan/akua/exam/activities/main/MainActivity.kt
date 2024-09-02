@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import com.drake.brv.item.ItemBind
+import com.drake.brv.listener.ItemDifferCallback
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.grid
 import com.drake.brv.utils.models
@@ -33,7 +34,9 @@ import fan.akua.exam.activities.main.model.TitleModel
 import fan.akua.exam.misc.anims.AkuaItemAnimation
 import fan.akua.exam.databinding.ActivityMainBinding
 import fan.akua.exam.activities.main.fragments.player.PlayerFragment
+import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.misc.utils.akuaEdgeToEdge
+import fan.akua.exam.misc.utils.areListsEqual
 import kotlinx.coroutines.launch
 
 /**
@@ -118,17 +121,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val toRVModels = recyclerViewState.toRVModels(resources = resources)
-        if (binding.rv.models != null) {
-            val merge = MainDataMerge.merge(
-                binding.rv.bindingAdapter.models as List<ItemBind>,
-                toRVModels
-            )
-            binding.rv.bindingAdapter.models = toRVModels
-
-            merge.dispatchUpdatesTo(binding.rv.bindingAdapter)
-        } else {
-            binding.rv.bindingAdapter.models = toRVModels
-        }
+        binding.rv.bindingAdapter.setDifferModels(toRVModels,false)
         stopRefreshAndLoad()
         binding.state.showContent()
         previousRecyclerViewState = recyclerViewState
@@ -224,6 +217,35 @@ class MainActivity : AppCompatActivity() {
         binding.rv.bindingAdapter.addHeader(HeaderModel(), animation = true)
         binding.rv.bindingAdapter.setAnimation(AkuaItemAnimation())
         binding.rv.bindingAdapter.animationRepeat = true
+        binding.rv.bindingAdapter.itemDifferCallback=object : ItemDifferCallback {
+            override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
+                if (oldItem is BannerModel && newItem is BannerModel) {
+                    return true
+                } else if (oldItem is GridModel && newItem is GridModel) {
+                    return oldItem.musicInfo.id == newItem.musicInfo.id
+                } else if (oldItem is LargeCardModel && newItem is LargeCardModel) {
+                    return oldItem.data.moduleConfigId == newItem.data.moduleConfigId
+                }
+                return false
+            }
+
+            override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
+                if (oldItem is BannerModel && newItem is BannerModel) {
+                    return oldItem.data.areListsEqual(newItem.data) { aItem, bItem ->
+                        !(aItem.id == bItem.id && aItem.musicName == bItem.musicName && aItem.author == bItem.author && aItem.coverUrl == bItem.coverUrl)
+                    }
+                } else if (oldItem is GridModel && newItem is GridModel) {
+                    val aMusicInfo = oldItem.musicInfo
+                    val bMusicInfo = newItem.musicInfo
+                    return aMusicInfo.id == bMusicInfo.id && aMusicInfo.musicName == bMusicInfo.musicName && aMusicInfo.author == bMusicInfo.author && aMusicInfo.coverUrl == bMusicInfo.coverUrl
+                } else if (oldItem is LargeCardModel && newItem is LargeCardModel) {
+                    return oldItem.data.musicInfoList.areListsEqual(newItem.data.musicInfoList) { aItem, bItem ->
+                        !(aItem.id == bItem.id && aItem.musicName == bItem.musicName && aItem.author == bItem.author && aItem.coverUrl == bItem.coverUrl)
+                    }
+                }
+                return false
+            }
+        }
 
         binding.slidingLayout.addPanelSlideListener(object :
             SlidingUpPanelLayout.PanelSlideListener {

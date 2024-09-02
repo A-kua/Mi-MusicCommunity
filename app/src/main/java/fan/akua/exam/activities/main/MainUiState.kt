@@ -61,7 +61,7 @@ fun RecyclerViewState.toRVModels(resources: Resources): List<ItemBind> {
     for (pair in gridModels) {
         otherList.add(
             TitleModel(
-                resources.getString(if (pair.first == 2) R.string.str_hot_rank else R.string.str_daily_recommend)
+                resources.getString(if (pair.first == 3) R.string.str_hot_rank else R.string.str_daily_recommend)
             )
         )
         otherList.addAll(pair.second.map {

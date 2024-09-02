@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.drake.brv.BindingAdapter
 import com.drake.brv.item.ItemBind
+import com.drake.brv.listener.ItemDifferCallback
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.linear
 import com.drake.brv.utils.setup
@@ -20,7 +21,6 @@ import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.databinding.ItemLargecardBinding
 import fan.akua.exam.databinding.ItemTypeLargecardBinding
 import fan.akua.exam.activities.main.intents.PlayMusicIntent
-import fan.akua.exam.misc.utils.GenericDiffUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,19 +31,7 @@ class LargeCardModel(val data: HomePageInfo) : ItemBind {
         binding.title.text = vh.context.resources.getString(R.string.str_exclusive_song)
         // 数据复用优化
         if (binding.rv.adapter != null) {
-            val diffUtilCallback = GenericDiffUtil(
-                oldList = binding.rv.bindingAdapter.models as List<MusicInfo>,
-                newList = data.musicInfoList,
-                areItemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-                areContentsTheSame = { oldItem, newItem ->
-                    oldItem.coverUrl == newItem.coverUrl &&
-                            oldItem.musicName == newItem.musicName &&
-                            oldItem.author == newItem.author
-                }
-            )
-            val diffResult = DiffUtil.calculateDiff(diffUtilCallback,false)
-            binding.rv.bindingAdapter.models = data.musicInfoList
-            diffResult.dispatchUpdatesTo(binding.rv.bindingAdapter)
+            binding.rv.bindingAdapter.setDifferModels(data.musicInfoList,false)
         } else {
             val width = binding.root.context.resources.displayMetrics.widthPixels * 0.8
             binding.rv.linear(RecyclerView.HORIZONTAL).setup {
@@ -78,7 +66,23 @@ class LargeCardModel(val data: HomePageInfo) : ItemBind {
                         AppState.clickMusic(PlayMusicIntent(musicInfo = getModel()))
                     }
                 }
-            }.models = data.musicInfoList
+            }
+            binding.rv.bindingAdapter.itemDifferCallback = object : ItemDifferCallback {
+                override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
+                    oldItem as MusicInfo
+                    newItem as MusicInfo
+                    return oldItem.id == newItem.id
+                }
+
+                override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
+                    oldItem as MusicInfo
+                    newItem as MusicInfo
+                    return oldItem.coverUrl == newItem.coverUrl &&
+                            oldItem.musicName == newItem.musicName &&
+                            oldItem.author == newItem.author
+                }
+            }
+            binding.rv.bindingAdapter.setDifferModels(data.musicInfoList,false)
             binding.rv.bindingAdapter.setAnimation(AkuaItemAnimation())
             val snapHelper: SnapHelper = LinearSnapHelper()
             snapHelper.attachToRecyclerView(binding.rv)
