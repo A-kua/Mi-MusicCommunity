@@ -37,7 +37,7 @@ class MainViewModel : ViewModel() {
                 bitmap = null,
                 songBean = null,
                 visible = true
-            ), SlidingViewState(PanelState.COLLAPSED)
+            ), SlidingViewState(PanelState.COLLAPSED), MenuState()
         )
     )
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
@@ -63,6 +63,20 @@ class MainViewModel : ViewModel() {
     fun panelShow() = viewModelScope.launch {
         val updatedMainPanelState = _uiState.value.panelState.copy(visible = true)
         _uiState.value = _uiState.value.copy(panelState = updatedMainPanelState)
+    }
+
+    fun openMenu() = viewModelScope.launch {
+        val updatedMenuState = MenuState(true)
+        _uiState.value = _uiState.value.copy(menuState = updatedMenuState)
+    }
+
+    fun closeMenu() = viewModelScope.launch {
+        val updatedMenuState = MenuState(false)
+        _uiState.value = _uiState.value.copy(menuState = updatedMenuState)
+    }
+
+    fun playPause() = viewModelScope.launch {
+        if (PlayerManager.pause.value) PlayerManager.start() else PlayerManager.pause()
     }
 
 
@@ -128,7 +142,7 @@ class MainViewModel : ViewModel() {
 
     /**
      * 监听热流：Item点击、播放图片更新、播放暂停、切歌、关闭播放页
-     * 监听冷流：点击音乐，关闭播放页面
+     * 监听冷流：点击音乐，关闭播放页面、打开菜单
      */
     init {
         viewModelScope.launch {
@@ -140,6 +154,12 @@ class MainViewModel : ViewModel() {
             AppState.closePlayerPageIntent.collect { closePage ->
                 val updatedSlidingViewState = SlidingViewState(state = PanelState.COLLAPSED)
                 _uiState.value = _uiState.value.copy(slidingViewState = updatedSlidingViewState)
+            }
+        }
+        viewModelScope.launch {
+            AppState.openMenuIntent.collect { openMenuIntent ->
+                val updatedMenuState = MenuState(true)
+                _uiState.value = _uiState.value.copy(menuState = updatedMenuState)
             }
         }
         viewModelScope.launch {

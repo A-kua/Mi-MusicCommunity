@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import fan.akua.exam.App
 import fan.akua.exam.AppState
-import fan.akua.exam.activities.main.intents.LikeMusicIntent
+import fan.akua.exam.activities.main.intents.OpenMenuIntent
 import fan.akua.exam.misc.utils.logD
 import fan.akua.exam.player.PlayerManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,6 +54,10 @@ class PlayerViewModel : ViewModel() {
 
     fun playPause() = viewModelScope.launch {
         if (PlayerManager.pause.value) PlayerManager.start() else PlayerManager.pause()
+    }
+
+    fun openMenu() = viewModelScope.launch {
+        AppState.openMenu(OpenMenuIntent())
     }
 
     fun like() = viewModelScope.launch {

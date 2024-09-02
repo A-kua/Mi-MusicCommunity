@@ -45,6 +45,7 @@ android {
 }
 
 dependencies {
+    implementation ("com.github.andrefrsousa:SuperBottomSheet:2.0.0")
     implementation (libs.lyricviewx)
     implementation(libs.library)
     implementation(libs.androidx.palette)

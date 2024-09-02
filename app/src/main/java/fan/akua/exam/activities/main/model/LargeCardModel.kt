@@ -1,7 +1,5 @@
 package fan.akua.exam.activities.main.model
 
-import android.widget.Toast
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
@@ -15,12 +13,14 @@ import com.drake.brv.utils.linear
 import com.drake.brv.utils.setup
 import fan.akua.exam.AppState
 import fan.akua.exam.R
+import fan.akua.exam.activities.main.intents.AddSongIntent
 import fan.akua.exam.misc.anims.AkuaItemAnimation
 import fan.akua.exam.data.HomePageInfo
 import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.databinding.ItemLargecardBinding
 import fan.akua.exam.databinding.ItemTypeLargecardBinding
 import fan.akua.exam.activities.main.intents.PlayMusicIntent
+import fan.akua.exam.data.toSongBean
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +31,7 @@ class LargeCardModel(val data: HomePageInfo) : ItemBind {
         binding.title.text = vh.context.resources.getString(R.string.str_exclusive_song)
         // 数据复用优化
         if (binding.rv.adapter != null) {
-            binding.rv.bindingAdapter.setDifferModels(data.musicInfoList,false)
+            binding.rv.bindingAdapter.setDifferModels(data.musicInfoList, false)
         } else {
             val width = binding.root.context.resources.displayMetrics.widthPixels * 0.816
             binding.rv.linear(RecyclerView.HORIZONTAL).setup {
@@ -50,13 +50,6 @@ class LargeCardModel(val data: HomePageInfo) : ItemBind {
                         .load(model.coverUrl)
                         .transition(DrawableTransitionOptions.withCrossFade(500))
                         .into(itemLargeBinding.img)
-                    itemLargeBinding.playButton.setOnClickListener {
-                        Toast.makeText(
-                            context,
-                            "将${model.musicName}添加到音乐列表",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
                 }
                 onClick(R.id.parentCardView) {
                     /**
@@ -64,6 +57,14 @@ class LargeCardModel(val data: HomePageInfo) : ItemBind {
                      */
                     CoroutineScope(Dispatchers.Main).launch {
                         AppState.clickMusic(PlayMusicIntent(musicInfo = getModel()))
+                    }
+                }
+                onClick(R.id.addButton) {
+                    /**
+                     * 无法与ViewModel通信，需要借助热流。
+                     */
+                    CoroutineScope(Dispatchers.Main).launch {
+                        AppState.addSong(AddSongIntent(getModel<MusicInfo>().toSongBean()))
                     }
                 }
             }
@@ -82,7 +83,7 @@ class LargeCardModel(val data: HomePageInfo) : ItemBind {
                             oldItem.author == newItem.author
                 }
             }
-            binding.rv.bindingAdapter.setDifferModels(data.musicInfoList,false)
+            binding.rv.bindingAdapter.setDifferModels(data.musicInfoList, false)
             binding.rv.bindingAdapter.setAnimation(AkuaItemAnimation())
             val snapHelper: SnapHelper = LinearSnapHelper()
             snapHelper.attachToRecyclerView(binding.rv)

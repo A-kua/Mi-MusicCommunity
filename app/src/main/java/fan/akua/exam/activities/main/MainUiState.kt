@@ -34,10 +34,15 @@ data class SlidingViewState(
     val state: SlidingUpPanelLayout.PanelState
 )
 
+data class MenuState(
+    val open: Boolean = false
+)
+
 data class MainUiState(
     val recyclerViewState: RecyclerViewState,
     val panelState: MainPanelState,
-    val slidingViewState: SlidingViewState
+    val slidingViewState: SlidingViewState,
+    val menuState: MenuState
 )
 
 enum class RequestState {

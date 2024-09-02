@@ -13,4 +13,9 @@
     <string name="str_error">数据加载出错啦！</string>
     <string name="channel_name">音乐播放服务</string>
     <string name="str_pls_choose">还没有选音乐哦！</string>
+
+    <string name="str_mode_loop">顺序模式</string>
+    <string name="str_mode_single">单曲模式</string>
+    <string name="str_mode_random">随机模式</string>
+    <string name="str_now_playing">当前播放</string>
 </resources>

@@ -6,9 +6,11 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.drake.brv.BindingAdapter
 import com.drake.brv.item.ItemBind
 import fan.akua.exam.AppState
+import fan.akua.exam.activities.main.intents.AddSongIntent
 import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.databinding.ItemTypeGridBinding
 import fan.akua.exam.activities.main.intents.PlayMusicIntent
+import fan.akua.exam.data.toSongBean
 import fan.akua.exam.misc.utils.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,12 +46,13 @@ class GridModel(val musicInfo: MusicInfo, val spanCount: Int) : ItemBind {
                 AppState.clickMusic(PlayMusicIntent(musicInfo = musicInfo))
             }
         }
-        binding.playButton.setOnClickListener {
-            Toast.makeText(
-                vh.context,
-                "将${musicInfo.musicName}添加到音乐列表",
-                Toast.LENGTH_SHORT
-            ).show()
+        binding.addButton.setOnClickListener {
+            /**
+             * 无法与ViewModel通信，需要借助热流。
+             */
+            CoroutineScope(Dispatchers.Main).launch {
+                AppState.addSong(AddSongIntent(musicInfo.toSongBean()))
+            }
         }
     }
 }

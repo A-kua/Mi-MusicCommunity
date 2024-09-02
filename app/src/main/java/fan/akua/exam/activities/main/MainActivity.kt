@@ -1,9 +1,6 @@
 package fan.akua.exam.activities.main
 
 import android.annotation.SuppressLint
-import android.graphics.RenderEffect
-import android.graphics.Shader
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -18,7 +15,6 @@ import com.drake.brv.item.ItemBind
 import com.drake.brv.listener.ItemDifferCallback
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.grid
-import com.drake.brv.utils.models
 import com.drake.brv.utils.setup
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.BezierRadarHeader
@@ -35,12 +31,10 @@ import fan.akua.exam.activities.main.model.TitleModel
 import fan.akua.exam.misc.anims.AkuaItemAnimation
 import fan.akua.exam.databinding.ActivityMainBinding
 import fan.akua.exam.activities.main.fragments.player.PlayerFragment
-import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.misc.GridItemDecoration
 import fan.akua.exam.misc.utils.akuaEdgeToEdge
 import fan.akua.exam.misc.utils.areListsEqual
 import fan.akua.exam.misc.utils.dp
-import fan.akua.exam.misc.utils.logD
 import kotlinx.coroutines.launch
 
 /**
@@ -66,10 +60,11 @@ class MainActivity : AppCompatActivity() {
         initialIntent()
 
         lifecycleScope.launch {
-            viewModel.uiState.collect { (recyclerViewState, mainPanelState, slidingViewState) ->
+            viewModel.uiState.collect { (recyclerViewState, mainPanelState, slidingViewState, menuState) ->
                 parseRecyclerViewState(recyclerViewState)
                 parseMainPanelState(mainPanelState)
                 parseSlidingViewState(slidingViewState)
+                parseMenuState(menuState)
             }
         }
 
@@ -92,6 +87,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun parseMenuState(menuState: MenuState) {
+        if (menuState.open) {
+            val bottomDialog =
+                supportFragmentManager.findFragmentByTag(MenuDialog::class.qualifiedName) as MenuDialog?
+            if (bottomDialog == null || !bottomDialog.isAdded) {
+                MenuDialog().show(
+                    supportFragmentManager,
+                    MenuDialog::class.qualifiedName
+                )
+            }
+        }
+    }
+
     /**
      * 处理RecyclerView的状态
      */
@@ -106,6 +114,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             RequestState.SUCCESS -> {
+
                 stopRefreshAndLoad()
                 binding.state.showContent()
             }
@@ -124,6 +133,7 @@ class MainActivity : AppCompatActivity() {
                 binding.swipe.setEnableLoadMore(false)
             }
         }
+
         val toRVModels = recyclerViewState.toRVModels(resources = resources)
         binding.rv.bindingAdapter.setDifferModels(toRVModels, false)
 
@@ -138,7 +148,7 @@ class MainActivity : AppCompatActivity() {
         if (previousSlidingViewState != null)
             if (previousSlidingViewState == slidingViewState) return
         if (binding.slidingLayout == null) {
-            if (previousSlidingViewState?.state!=slidingViewState.state) {
+            if (previousSlidingViewState?.state != slidingViewState.state) {
                 when (slidingViewState.state) {
                     PanelState.EXPANDED -> {
                         if (fragment.isAdded && fragment.isHidden) {
@@ -164,7 +174,7 @@ class MainActivity : AppCompatActivity() {
 
         } else {
             binding.slidingLayout?.let {
-                if (previousSlidingViewState?.state!=slidingViewState.state) {
+                if (previousSlidingViewState?.state != slidingViewState.state) {
                     if (it.panelState != slidingViewState.state) {
                         it.panelState = slidingViewState.state
                     }
@@ -187,7 +197,7 @@ class MainActivity : AppCompatActivity() {
             if (previousMainPanelState == panelState) return
 
         binding.panel?.let { panel ->
-            if (previousMainPanelState?.visible!=panelState.visible) {
+            if (previousMainPanelState?.visible != panelState.visible) {
                 if (panelState.visible) {
                     panel.root.visibility = VISIBLE
                 } else {
@@ -348,6 +358,14 @@ class MainActivity : AppCompatActivity() {
 
         binding.swipe.setOnLoadMoreListener {
             viewModel.loadNextPage()
+        }
+        binding.panel?.let {
+            it.panelMenu.setOnClickListener {
+                viewModel.openMenu()
+            }
+            it.panelPlayPause.setOnClickListener {
+                viewModel.playPause()
+            }
         }
     }
 

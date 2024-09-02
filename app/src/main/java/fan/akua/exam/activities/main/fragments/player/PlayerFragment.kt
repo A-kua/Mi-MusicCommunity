@@ -94,9 +94,6 @@ class PlayerFragment : Fragment() {
 
     private var previousPlayerPanelState: PlayerPanelState? = null
     private fun parsePlayerPanelState(playerPanelState: PlayerPanelState) {
-        if (previousPlayerPanelState != null)
-            if (previousPlayerPanelState == playerPanelState) return
-
         playerPanelState.bitmap?.let {
             if (previousPlayerPanelState?.bitmap == playerPanelState.bitmap) return@let
             binding.flowView.setBitmap(it)
@@ -143,8 +140,6 @@ class PlayerFragment : Fragment() {
 
     private var previousPlayerPageState: PlayerPageState? = null
     private fun parsePlayerPageState(playerPageState: PlayerPageState) {
-        if (previousPlayerPageState != null)
-            if (previousPlayerPageState == playerPageState) return
         when (playerPageState.page) {
             PageMode.Image -> childFragmentManager.beginTransaction()
                 .setReorderingAllowed(true)
@@ -200,6 +195,9 @@ class PlayerFragment : Fragment() {
         }
         binding.playPause.setOnClickListener {
             viewModel.playPause()
+        }
+        binding.menu.setOnClickListener {
+            viewModel.openMenu()
         }
         binding.like.setOnClickListener {
             if (binding.like.tag as Boolean)
