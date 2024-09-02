@@ -51,6 +51,7 @@ class MenuDialog : SuperBottomSheetFragment() {
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initialViews()
         lifecycleScope.launch {
@@ -66,6 +67,8 @@ class MenuDialog : SuperBottomSheetFragment() {
         lifecycleScope.launch {
             PlayerManager.index.collect { index ->
                 currentIndex = index
+                // Todo 性能优化
+                binding.rv.bindingAdapter.notifyDataSetChanged()
             }
         }
     }
@@ -144,7 +147,8 @@ class MenuDialog : SuperBottomSheetFragment() {
     }
 
     override fun getPeekHeight(): Int {
-        return (requireContext().resources.displayMetrics.widthPixels * 0.6767).roundToInt()
+        // 黄金分割
+        return (requireContext().resources.displayMetrics.heightPixels * 0.382).roundToInt()
     }
 
     override fun onDestroy() {
