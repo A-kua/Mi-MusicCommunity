@@ -15,6 +15,7 @@ import com.drake.brv.item.ItemBind
 import com.drake.brv.listener.ItemDifferCallback
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.grid
+import com.drake.brv.utils.models
 import com.drake.brv.utils.setup
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.BezierRadarHeader
@@ -35,6 +36,7 @@ import fan.akua.exam.misc.GridItemDecoration
 import fan.akua.exam.misc.utils.akuaEdgeToEdge
 import fan.akua.exam.misc.utils.areListsEqual
 import fan.akua.exam.misc.utils.dp
+import fan.akua.exam.misc.utils.logD
 import kotlinx.coroutines.launch
 
 /**
@@ -92,6 +94,7 @@ class MainActivity : AppCompatActivity() {
             val bottomDialog =
                 supportFragmentManager.findFragmentByTag(MenuDialog::class.qualifiedName) as MenuDialog?
             if (bottomDialog == null || !bottomDialog.isAdded) {
+                "performance".logD("MainActivity menu show")
                 MenuDialog().show(
                     supportFragmentManager,
                     MenuDialog::class.qualifiedName
@@ -114,7 +117,16 @@ class MainActivity : AppCompatActivity() {
             }
 
             RequestState.SUCCESS -> {
+                "performance".logD("MainActivity RV success")
 
+                val toRVModels = recyclerViewState.toRVModels(resources = resources)
+                if (binding.rv.bindingAdapter.models!!.isEmpty()) {
+                    "performance".logD("MainActivity RV firstSet")
+                    binding.rv.models = toRVModels
+                }else{
+                    "performance".logD("MainActivity RV diffSet")
+                    binding.rv.bindingAdapter.setDifferModels(toRVModels, false)
+                }
                 stopRefreshAndLoad()
                 binding.state.showContent()
             }
@@ -133,10 +145,6 @@ class MainActivity : AppCompatActivity() {
                 binding.swipe.setEnableLoadMore(false)
             }
         }
-
-        val toRVModels = recyclerViewState.toRVModels(resources = resources)
-        binding.rv.bindingAdapter.setDifferModels(toRVModels, false)
-
         previousRecyclerViewState = recyclerViewState
     }
 
@@ -151,7 +159,9 @@ class MainActivity : AppCompatActivity() {
             if (previousSlidingViewState?.state != slidingViewState.state) {
                 when (slidingViewState.state) {
                     PanelState.EXPANDED -> {
+                        "performance".logD("MainActivity slidingView hide panel")
                         if (fragment.isAdded && fragment.isHidden) {
+                            "performance".logD("MainActivity slidingView show fragment")
                             supportFragmentManager.beginTransaction()
                                 .setReorderingAllowed(true)
                                 .show(fragment)
@@ -161,10 +171,12 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     PanelState.COLLAPSED -> {
+                        "performance".logD("MainActivity slidingView hide fragment")
                         supportFragmentManager.beginTransaction()
                             .setReorderingAllowed(true)
                             .hide(fragment)
                             .commit()
+                        "performance".logD("MainActivity slidingView hide panel")
                         viewModel.panelShow()
                     }
 
@@ -176,6 +188,7 @@ class MainActivity : AppCompatActivity() {
             binding.slidingLayout?.let {
                 if (previousSlidingViewState?.state != slidingViewState.state) {
                     if (it.panelState != slidingViewState.state) {
+                        "performance".logD("MainActivity slidingView state change")
                         it.panelState = slidingViewState.state
                     }
                 }
@@ -198,6 +211,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.panel?.let { panel ->
             if (previousMainPanelState?.visible != panelState.visible) {
+                "performance".logD("MainActivity panel visible Change")
                 if (panelState.visible) {
                     panel.root.visibility = VISIBLE
                 } else {
@@ -206,17 +220,20 @@ class MainActivity : AppCompatActivity() {
             }
             panelState.bitmap?.let {
                 if (previousMainPanelState?.bitmap != panelState.bitmap) {
+                    "performance".logD("MainActivity panel bitmap set")
                     panel.root.findViewById<ImageView>(R.id.panel_img)
                         .setImageBitmap(it)
                 }
             }
             if (previousMainPanelState?.isPause != panelState.isPause) {
+                "performance".logD("MainActivity panel palyPause")
                 panel.root.findViewById<ImageButton>(R.id.panel_play_pause)
                     .setImageResource(if (panelState.isPause) R.drawable.ic_pausing else R.drawable.ic_playing)
             }
 
             if (previousMainPanelState?.songBean != panelState.songBean)
                 panelState.songBean?.let {
+                    "performance".logD("MainActivity panel setName and setAuthor")
                     panel.root.findViewById<TextView>(R.id.panel_music_name).text =
                         it.songName
                     panel.root.findViewById<TextView>(R.id.panel_music_author).text =
@@ -255,7 +272,7 @@ class MainActivity : AppCompatActivity() {
             addType<LargeCardModel>(R.layout.item_type_largecard)
             addType<GridModel>(R.layout.item_type_grid)
             addType<TitleModel>(R.layout.item_type_title)
-        }
+        }.models = emptyList()
 
         // 为不同类型的Item设置占用的宽度
         val gridLayoutManager = binding.rv.layoutManager as GridLayoutManager
