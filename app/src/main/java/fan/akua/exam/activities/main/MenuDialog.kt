@@ -2,6 +2,7 @@ package fan.akua.exam.activities.main
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +35,11 @@ class MenuDialog : SuperBottomSheetFragment() {
     private lateinit var binding: FragmentMenuBinding
 
     private val viewModel: MainViewModel by activityViewModels()
+    private var currentIndex: Int = -1
+    private val selectTitleColor = Color.parseColor("#3325CD")
+    private val selectAuthorColor = Color.parseColor("#993325CD")
+    private val unSelectTitleColor = Color.parseColor("#000000")
+    private val unSelectAuthorColor = Color.parseColor("#99000000")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,11 +54,6 @@ class MenuDialog : SuperBottomSheetFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initialViews()
         lifecycleScope.launch {
-            viewModel.uiState.collect { (recyclerViewState, mainPanelState, _, _) ->
-
-            }
-        }
-        lifecycleScope.launch {
             PlayerManager.playMode.collect { mode ->
                 parsePlayMode(mode)
             }
@@ -60,6 +61,13 @@ class MenuDialog : SuperBottomSheetFragment() {
         lifecycleScope.launch {
             PlayerManager.playlist.collect { playlist ->
                 parsePlayList(playlist)
+            }
+        }
+        lifecycleScope.launch {
+            PlayerManager.index.collect { index ->
+                binding.rv.bindingAdapter.notifyItemChanged(index)
+                binding.rv.bindingAdapter.notifyItemChanged(currentIndex)
+                currentIndex = index
             }
         }
     }
@@ -71,6 +79,19 @@ class MenuDialog : SuperBottomSheetFragment() {
                 val model = getModel<SongBean>()
                 findView<TextView>(R.id.music_name).text = model.songName
                 findView<TextView>(R.id.music_author).text = model.author
+                if (modelPosition == currentIndex) {
+                    findView<TextView>(R.id.music_name).setTextColor(selectTitleColor)
+                    findView<TextView>(R.id.music_author).setTextColor(selectAuthorColor)
+                } else {
+                    findView<TextView>(R.id.music_name).setTextColor(unSelectTitleColor)
+                    findView<TextView>(R.id.music_author).setTextColor(unSelectAuthorColor)
+                }
+            }
+            onClick(R.id.item_root) {
+                viewModel.playMusic(getModel())
+            }
+            onClick(R.id.music_remove) {
+                viewModel.removeMusic(getModel())
             }
         }
     }

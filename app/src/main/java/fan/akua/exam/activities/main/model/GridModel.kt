@@ -1,6 +1,5 @@
 package fan.akua.exam.activities.main.model
 
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.drake.brv.BindingAdapter
@@ -9,7 +8,7 @@ import fan.akua.exam.AppState
 import fan.akua.exam.activities.main.intents.AddSongIntent
 import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.databinding.ItemTypeGridBinding
-import fan.akua.exam.activities.main.intents.PlayMusicIntent
+import fan.akua.exam.activities.main.intents.PlayMusicGroupIntent
 import fan.akua.exam.data.toSongBean
 import fan.akua.exam.misc.utils.dp
 import kotlinx.coroutines.CoroutineScope
@@ -43,7 +42,7 @@ class GridModel(val musicInfo: MusicInfo, val spanCount: Int) : ItemBind {
              * 无法与ViewModel通信，需要借助热流。
              */
             CoroutineScope(Dispatchers.Main).launch {
-                AppState.clickMusic(PlayMusicIntent(musicInfo = musicInfo))
+                AppState.clickMusic(PlayMusicGroupIntent(musicInfo = musicInfo))
             }
         }
         binding.addButton.setOnClickListener {

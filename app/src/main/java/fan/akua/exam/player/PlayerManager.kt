@@ -73,6 +73,45 @@ object PlayerManager {
         }
     }
 
+    fun addSong(songBean: SongBean) {
+        val currentList = _playList.value ?: emptyList()
+
+        if (currentList.none { it.id == songBean.id }) {
+            val updatedList = currentList + songBean
+            _playList.value = updatedList
+        }
+    }
+
+    fun removeSong(song: SongBean) {
+        val currentList = _playList.value ?: return
+
+        val updatedList = currentList.filter { it.id != song.id }
+        _playList.value = updatedList
+
+        if (updatedList.isNotEmpty())
+            when (_playMode.value) {
+                PlayMode.SINGLE_LOOP -> {
+                    internalPlay(_indexFlow.value)
+                }
+
+                PlayMode.LIST_LOOP -> {
+//                    val index = _indexFlow.value + 1
+//                    internalPlay(index)
+                }
+
+                PlayMode.RANDOM -> {
+                    internalPlay(Random.nextInt(0, updatedList.size))
+                }
+            }
+    }
+
+    fun play(songBean: SongBean) {
+        val currentList = _playList.value ?: return
+
+        val index = currentList.indexOfFirst { it.id == songBean.id }
+        internalPlay(index)
+    }
+
     fun play(list: List<SongBean>, index: Int) {
         if (!list.areListsEqual(_playList.value)) {
             _playList.value = list
@@ -91,6 +130,7 @@ object PlayerManager {
     fun playNext() {
         when (_playMode.value) {
             PlayMode.SINGLE_LOOP -> {
+                "bug9-2".logD("single loop ")
                 singleLoopPlay(_indexFlow.value)
             }
 
@@ -100,6 +140,7 @@ object PlayerManager {
             }
 
             PlayMode.RANDOM -> {
+                "bug9-2".logD("random  ")
                 _playList.value?.let { playlist ->
                     if (playlist.size >= 2) {
                         val randomNumber = if (playlist.size == 2) {
@@ -147,6 +188,7 @@ object PlayerManager {
             _indexFlow.value = index
             _currentSong.value = it
             androidMusicPlayer.setBean(song)
+            "bug9-2".logD("song ${song.songName}")
             waitForPrepare = true
 
             // 如果有当前请求，取消它

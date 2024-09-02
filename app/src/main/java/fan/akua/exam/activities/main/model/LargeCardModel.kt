@@ -19,7 +19,7 @@ import fan.akua.exam.data.HomePageInfo
 import fan.akua.exam.data.MusicInfo
 import fan.akua.exam.databinding.ItemLargecardBinding
 import fan.akua.exam.databinding.ItemTypeLargecardBinding
-import fan.akua.exam.activities.main.intents.PlayMusicIntent
+import fan.akua.exam.activities.main.intents.PlayMusicGroupIntent
 import fan.akua.exam.data.toSongBean
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +56,7 @@ class LargeCardModel(val data: HomePageInfo) : ItemBind {
                      * 无法与ViewModel通信，需要借助热流。
                      */
                     CoroutineScope(Dispatchers.Main).launch {
-                        AppState.clickMusic(PlayMusicIntent(musicInfo = getModel()))
+                        AppState.clickMusic(PlayMusicGroupIntent(musicInfo = getModel()))
                     }
                 }
                 onClick(R.id.addButton) {

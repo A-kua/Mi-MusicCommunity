@@ -6,6 +6,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 import fan.akua.exam.AppState
 import fan.akua.exam.data.api.MusicService
 import fan.akua.exam.data.MusicInfo
+import fan.akua.exam.data.SongBean
 import fan.akua.exam.data.separateBanner
 import fan.akua.exam.data.toSongBean
 import fan.akua.exam.player.PlayerManager
@@ -41,6 +42,14 @@ class MainViewModel : ViewModel() {
         )
     )
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+
+    fun playMusic(songBean: SongBean) = viewModelScope.launch {
+        PlayerManager.play(songBean)
+    }
+
+    fun removeMusic(songBean: SongBean) = viewModelScope.launch {
+        PlayerManager.removeSong(songBean)
+    }
 
     fun slidingShow() = viewModelScope.launch {
         val updatedSlidingViewState = SlidingViewState(state = PanelState.EXPANDED)
@@ -78,7 +87,6 @@ class MainViewModel : ViewModel() {
     fun playPause() = viewModelScope.launch {
         if (PlayerManager.pause.value) PlayerManager.start() else PlayerManager.pause()
     }
-
 
     fun loadNextPage() = viewModelScope.launch {
         if (currentPage >= totalPages) {
@@ -142,7 +150,7 @@ class MainViewModel : ViewModel() {
 
     /**
      * 监听热流：Item点击、播放图片更新、播放暂停、切歌、关闭播放页
-     * 监听冷流：点击音乐，关闭播放页面、打开菜单
+     * 监听冷流：点击音乐，关闭播放页面、打开菜单、添加音乐
      */
     init {
         viewModelScope.launch {
@@ -160,6 +168,11 @@ class MainViewModel : ViewModel() {
             AppState.openMenuIntent.collect { openMenuIntent ->
                 val updatedMenuState = MenuState(true)
                 _uiState.value = _uiState.value.copy(menuState = updatedMenuState)
+            }
+        }
+        viewModelScope.launch {
+            AppState.addSongIntent.collect { addSongIntent ->
+                PlayerManager.addSong(addSongIntent.songBean)
             }
         }
         viewModelScope.launch {

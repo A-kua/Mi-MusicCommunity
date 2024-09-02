@@ -2,7 +2,7 @@ package fan.akua.exam
 
 import fan.akua.exam.activities.main.fragments.player.PageMode
 import fan.akua.exam.activities.main.intents.AddSongIntent
-import fan.akua.exam.activities.main.intents.PlayMusicIntent
+import fan.akua.exam.activities.main.intents.PlayMusicGroupIntent
 import fan.akua.exam.activities.main.intents.ClosePlayerPageIntent
 import fan.akua.exam.activities.main.intents.OpenMenuIntent
 import fan.akua.exam.activities.main.intents.SwitchPageIntent
@@ -14,8 +14,8 @@ object AppState {
     val closePlayerPageIntent = _closePlayerPageIntent.asSharedFlow()
     private val _switchPageIntent = MutableSharedFlow<SwitchPageIntent>()
     val switchPageIntent = _switchPageIntent.asSharedFlow()
-    private val _playMusicIntent = MutableSharedFlow<PlayMusicIntent>()
-    val clickMusicIntent = _playMusicIntent.asSharedFlow()
+    private val _playMusicGroupIntent = MutableSharedFlow<PlayMusicGroupIntent>()
+    val clickMusicIntent = _playMusicGroupIntent.asSharedFlow()
     private val _openMenuIntent = MutableSharedFlow<OpenMenuIntent>()
     val openMenuIntent = _openMenuIntent.asSharedFlow()
     private val _addSongIntent = MutableSharedFlow<AddSongIntent>()
@@ -38,8 +38,8 @@ object AppState {
     /**
      * 点击音乐
      */
-    suspend fun clickMusic(playMusicIntent: PlayMusicIntent) {
-        _playMusicIntent.emit(playMusicIntent)
+    suspend fun clickMusic(playMusicGroupIntent: PlayMusicGroupIntent) {
+        _playMusicGroupIntent.emit(playMusicGroupIntent)
     }
 
     /**
@@ -55,4 +55,5 @@ object AppState {
     suspend fun addSong(addSongIntent: AddSongIntent) {
         _addSongIntent.emit(addSongIntent)
     }
+
 }
