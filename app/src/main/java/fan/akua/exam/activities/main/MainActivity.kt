@@ -1,5 +1,6 @@
 package fan.akua.exam.activities.main
 
+import android.annotation.SuppressLint
 import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.os.Build
@@ -174,6 +175,8 @@ class MainActivity : AppCompatActivity() {
      * 处理Panel的状态
      */
     private var previousMainPanelState: MainPanelState? = null
+
+    @SuppressLint("SetTextI18n")
     private fun parseMainPanelState(panelState: MainPanelState) {
         if (binding.panel == null) return
         if (previousMainPanelState != null)
@@ -198,7 +201,7 @@ class MainActivity : AppCompatActivity() {
                 panel.root.findViewById<TextView>(R.id.panel_music_name).text =
                     it.songName
                 panel.root.findViewById<TextView>(R.id.panel_music_author).text =
-                    it.author
+                    "-${it.author}"
             }
         }
         previousMainPanelState = panelState

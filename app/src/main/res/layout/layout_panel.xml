@@ -3,14 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#bfbfbf"
-    android:layout_height="74dp">
+    android:layout_height="70dp"
+    android:background="@color/white"
+    android:paddingStart="24dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="8dp">
 
     <fan.akua.exam.view.ClipPathCircleImage
         android:id="@+id/panel_img"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="24dp"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,11 +24,10 @@
         style="@style/PlayerTitleStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/panel_img"
         app:layout_constraintStart_toEndOf="@id/panel_img"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/panel_img"
         tools:text="到此为止" />
 
     <TextView
@@ -33,42 +35,35 @@
         style="@style/PlayerAuthorStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@id/panel_music_name"
-        app:layout_constraintStart_toStartOf="@id/panel_music_name"
-        app:layout_constraintTop_toBottomOf="@id/panel_music_name"
-        tools:text="张国荣" />
-
-    <ImageButton
-        android:id="@+id/panel_last_song"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/bg_button_48dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_last_song"
-        app:layout_constraintBottom_toBottomOf="@+id/panel_play_pause"
-        app:layout_constraintEnd_toStartOf="@+id/panel_play_pause"
-        app:layout_constraintTop_toTopOf="@+id/panel_play_pause" />
+        app:layout_constraintBottom_toBottomOf="@id/panel_music_name"
+        app:layout_constraintStart_toEndOf="@id/panel_music_name"
+        app:layout_constraintTop_toTopOf="@id/panel_music_name"
+        tools:text="-张国荣" />
 
     <ImageButton
         android:id="@+id/panel_play_pause"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/bg_button_48dp"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginEnd="20dp"
+        android:background="?attr/controlBackground"
+        android:padding="4dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_pausing"
-        app:layout_constraintBottom_toBottomOf="@+id/panel_next_song"
-        app:layout_constraintEnd_toStartOf="@+id/panel_next_song"
-        app:layout_constraintTop_toTopOf="@+id/panel_next_song" />
+        app:layout_constraintBottom_toBottomOf="@+id/panel_menu"
+        app:layout_constraintEnd_toStartOf="@+id/panel_menu"
+        app:layout_constraintTop_toTopOf="@+id/panel_menu"
+        app:tint="#CC000000" />
 
     <ImageButton
-        android:id="@+id/panel_next_song"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/bg_button_48dp"
+        android:id="@+id/panel_menu"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:background="?attr/controlBackground"
+        android:padding="4dp"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_next_song"
+        android:src="@drawable/ic_menu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#CC000000" />
 </androidx.constraintlayout.widget.ConstraintLayout>

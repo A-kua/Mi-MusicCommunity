@@ -7,5 +7,5 @@ data class SongBean(
     val id: Long,
     val lyricUrl: String,
     val author: String,
-    val like: Boolean,
+    var like: Boolean,
 )

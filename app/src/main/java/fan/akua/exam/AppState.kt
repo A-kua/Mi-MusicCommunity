@@ -3,6 +3,7 @@ package fan.akua.exam
 import fan.akua.exam.activities.main.fragments.player.PageMode
 import fan.akua.exam.activities.main.intents.PlayMusicIntent
 import fan.akua.exam.activities.main.intents.ClosePlayerPageIntent
+import fan.akua.exam.activities.main.intents.LikeMusicIntent
 import fan.akua.exam.activities.main.intents.SwitchPageIntent
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -12,8 +13,8 @@ object AppState {
     val closePlayerPageIntent = _closePlayerPageIntent.asSharedFlow()
     private val _switchPageIntent = MutableSharedFlow<SwitchPageIntent>()
     val switchPageIntent = _switchPageIntent.asSharedFlow()
-    private val _playMusicIntentIntent = MutableSharedFlow<PlayMusicIntent>()
-    val clickMusicIntent = _playMusicIntentIntent.asSharedFlow()
+    private val _playMusicIntent = MutableSharedFlow<PlayMusicIntent>()
+    val clickMusicIntent = _playMusicIntent.asSharedFlow()
 
     /**
      * 关闭播放页面
@@ -33,6 +34,7 @@ object AppState {
      * 点击音乐
      */
     suspend fun clickMusic(playMusicIntent: PlayMusicIntent) {
-        _playMusicIntentIntent.emit(playMusicIntent)
+        _playMusicIntent.emit(playMusicIntent)
     }
+
 }

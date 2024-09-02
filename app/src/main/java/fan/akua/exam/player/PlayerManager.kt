@@ -66,51 +66,10 @@ object PlayerManager {
         _playMode.value = mode
     }
 
-    /**
-     * 专门针对单曲播放的性能优化
-     */
-    private fun singleLoopPlay(index: Int) {
-        val song = _playList.value?.getOrNull(index)
-        if (song == _currentSong.value) {
-            androidMusicPlayer.seekTo(0)
-            androidMusicPlayer.start()
-        } else {
-            internalPlay(index)
-        }
-    }
-
-    private fun internalPlay(index: Int) {
-        val song = _playList.value?.getOrNull(index)
-        song?.let {
-            _indexFlow.value = index
-            _currentSong.value = it
-            androidMusicPlayer.setBean(song)
-            waitForPrepare = true
-
-            // 如果有当前请求，取消它
-            currentRequest?.let {
-                Glide.with(App.context).clear(currentRequest)
-            }
-
-            currentRequest = object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    _bitmapFlow.value = resource.copy(Bitmap.Config.ARGB_8888, false)
-                }
-
-                override fun onLoadCleared(placeholder: Drawable?) {
-                    currentRequest = null
-                }
-
-                override fun onLoadFailed(errorDrawable: Drawable?) {
-                    currentRequest = null
-                }
-            }
-
-            Glide.with(App.context)
-                .asBitmap()
-                .load(song.coverUrl)
-                .override(500, 500)
-                .into(currentRequest!!)
+    fun like(songBean: SongBean) {
+        _currentSong.value?.let {
+            if (songBean.id == it.id)
+                _currentSong.value = it.copy(like = !songBean.like)
         }
     }
 
@@ -169,5 +128,52 @@ object PlayerManager {
         androidMusicPlayer.seekTo(long)
     }
 
+    /**
+     * 专门针对单曲播放的性能优化
+     */
+    private fun singleLoopPlay(index: Int) {
+        val song = _playList.value?.getOrNull(index)
+        if (song == _currentSong.value) {
+            androidMusicPlayer.seekTo(0)
+            androidMusicPlayer.start()
+        } else {
+            internalPlay(index)
+        }
+    }
+
+    private fun internalPlay(index: Int) {
+        val song = _playList.value?.getOrNull(index)
+        song?.let {
+            _indexFlow.value = index
+            _currentSong.value = it
+            androidMusicPlayer.setBean(song)
+            waitForPrepare = true
+
+            // 如果有当前请求，取消它
+            currentRequest?.let {
+                Glide.with(App.context).clear(currentRequest)
+            }
+
+            currentRequest = object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    _bitmapFlow.value = resource.copy(Bitmap.Config.ARGB_8888, false)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    currentRequest = null
+                }
+
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    currentRequest = null
+                }
+            }
+
+            Glide.with(App.context)
+                .asBitmap()
+                .load(song.coverUrl)
+                .override(500, 500)
+                .into(currentRequest!!)
+        }
+    }
 
 }

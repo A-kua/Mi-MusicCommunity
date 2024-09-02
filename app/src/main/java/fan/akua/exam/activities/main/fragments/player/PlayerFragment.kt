@@ -94,26 +94,37 @@ class PlayerFragment : Fragment() {
     private fun parsePlayerPanelState(playerPanelState: PlayerPanelState) {
         if (previousPlayerPanelState != null)
             if (previousPlayerPanelState == playerPanelState) return
+
         playerPanelState.bitmap?.let {
+            if (previousPlayerPanelState?.bitmap == playerPanelState.bitmap) return@let
             binding.flowView.setBitmap(it)
         }
-        binding.playPause.setImageResource(if (playerPanelState.isPause) R.drawable.ic_pausing else R.drawable.ic_playing)
-        binding.playType.run {
-            when (playerPanelState.playMode) {
-                PlayerManager.PlayMode.SINGLE_LOOP -> setImageResource(R.drawable.ic_play_type_circulation)
-                PlayerManager.PlayMode.LIST_LOOP -> setImageResource(R.drawable.ic_play_type_order)
-                PlayerManager.PlayMode.RANDOM -> setImageResource(R.drawable.ic_play_type_random)
+        binding.playPause.run {
+            if (playerPanelState.isPause && binding.playPause.isPlay) pause()
+            else if (!binding.playPause.isPlay) play()
+        }
+        if (previousPlayerPanelState?.playMode != playerPanelState.playMode)
+            binding.playType.run {
+                when (playerPanelState.playMode) {
+                    PlayerManager.PlayMode.SINGLE_LOOP -> setImageResource(R.drawable.ic_play_type_circulation)
+                    PlayerManager.PlayMode.LIST_LOOP -> setImageResource(R.drawable.ic_play_type_order)
+                    PlayerManager.PlayMode.RANDOM -> setImageResource(R.drawable.ic_play_type_random)
+                }
+            }
+        if (previousPlayerPanelState?.songBean != playerPanelState.songBean) {
+            playerPanelState.songBean?.let {
+                binding.musicName.text = it.songName
+                binding.musicAuthor.text = it.author
             }
         }
         playerPanelState.songBean?.let {
-            binding.musicName.text = it.songName
-            binding.musicAuthor.text = it.author
             binding.like.setImageResource(if (it.like) R.drawable.ic_like else R.drawable.ic_unlike)
         }
-        playerPanelState.duration.run {
-            binding.durationTime.text = formatSecondsToTime()
-            binding.progressBar.max = toInt()
-        }
+        if (previousPlayerPanelState?.duration != playerPanelState.duration)
+            playerPanelState.duration.run {
+                binding.durationTime.text = formatSecondsToTime()
+                binding.progressBar.max = toInt()
+            }
         playerPanelState.currentTime.run {
             if (isTouching) return@run
             binding.currentTime.text = formatSecondsToTime()
@@ -186,6 +197,9 @@ class PlayerFragment : Fragment() {
         }
         binding.playPause.setOnClickListener {
             viewModel.playPause()
+        }
+        binding.like.setOnClickListener {
+            viewModel.like()
         }
     }
 }
