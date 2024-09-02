@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.drake.spannable.movement.ClickableMovementMethod
 import com.drake.spannable.replaceSpan
 import com.drake.spannable.span.HighlightSpan
+import com.tencent.mmkv.BuildConfig
 import fan.akua.exam.R
 import fan.akua.exam.activities.main.MainActivity
 import fan.akua.exam.databinding.ActivitySplashBinding
@@ -41,8 +42,7 @@ class SplashActivity : AppCompatActivity() {
                 jumpActivity()
             else
                 showTermsDialog()
-//        }, 2 * 1000)
-        }, 2 )
+        }, if (BuildConfig.DEBUG) 10 else 2 * 1000)
     }
 
     private fun jumpActivity() {
@@ -66,11 +66,16 @@ class SplashActivity : AppCompatActivity() {
         val text =
             "欢迎使用音乐社区，我们将严格遵守相关法律和隐私政策保护您的个人隐私，请您阅读并同意《用户协议》与《隐私政策》。"
         contentTextView.movementMethod = ClickableMovementMethod.getInstance()
-        contentTextView.text =text.replaceSpan(("《用户协议》|《隐私政策》").toRegex()) { matchResult ->
-            HighlightSpan(Color.BLUE) {
-                Toast.makeText(this@SplashActivity, "点击${matchResult.value}", Toast.LENGTH_SHORT).show()
+        contentTextView.text =
+            text.replaceSpan(("《用户协议》|《隐私政策》").toRegex()) { matchResult ->
+                HighlightSpan(Color.BLUE) {
+                    Toast.makeText(
+                        this@SplashActivity,
+                        "点击${matchResult.value}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
-        }
 
         disagreeTextView.setOnClickListener {
             dialog.dismiss()

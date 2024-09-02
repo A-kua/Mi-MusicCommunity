@@ -22,7 +22,6 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
         GridLayoutManager layoutManager = (GridLayoutManager) parent.getLayoutManager();
         if (layoutManager == null) return;
         int spanCount = layoutManager.getSpanCount();
-        int column = position % spanCount;
 
         outRect.left = margin / 2;
         outRect.right = margin / 2;

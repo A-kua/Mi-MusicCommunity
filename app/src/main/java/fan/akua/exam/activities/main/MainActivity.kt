@@ -23,6 +23,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.INVISIBLE
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.VISIBLE
+import fan.akua.exam.Constants.TAG_PREF
 import fan.akua.exam.R
 import fan.akua.exam.activities.main.model.BannerModel
 import fan.akua.exam.activities.main.model.GridModel
@@ -94,7 +95,7 @@ class MainActivity : AppCompatActivity() {
             val bottomDialog =
                 supportFragmentManager.findFragmentByTag(MenuDialog::class.qualifiedName) as MenuDialog?
             if (bottomDialog == null || !bottomDialog.isAdded) {
-                "performance".logD("MainActivity menu show")
+                TAG_PREF.logD("MainActivity menu show")
                 MenuDialog().show(
                     supportFragmentManager,
                     MenuDialog::class.qualifiedName
@@ -117,22 +118,22 @@ class MainActivity : AppCompatActivity() {
             }
 
             RequestState.SUCCESS -> {
-                "performance".logD("MainActivity RV success")
+                TAG_PREF.logD("MainActivity RV success")
 
                 val toRVModels = recyclerViewState.toRVModels(resources = resources)
                 if (binding.rv.bindingAdapter.models!!.isEmpty()) {
-                    "performance".logD("MainActivity RV firstSet")
+                    TAG_PREF.logD("MainActivity RV firstSet")
                     binding.rv.models = toRVModels
                 }else{
-                    "performance".logD("MainActivity RV diffSet")
+                    TAG_PREF.logD("MainActivity RV diffSet")
                     binding.rv.bindingAdapter.setDifferModels(toRVModels, false)
                 }
-                stopRefreshAndLoad()
+                stoTAG_PREFreshAndLoad()
                 binding.state.showContent()
             }
 
             RequestState.ERROR -> {
-                stopRefreshAndLoad()
+                stoTAG_PREFreshAndLoad()
                 binding.state.showError()
             }
 
@@ -159,9 +160,9 @@ class MainActivity : AppCompatActivity() {
             if (previousSlidingViewState?.state != slidingViewState.state) {
                 when (slidingViewState.state) {
                     PanelState.EXPANDED -> {
-                        "performance".logD("MainActivity slidingView hide panel")
+                        TAG_PREF.logD("MainActivity slidingView hide panel")
                         if (fragment.isAdded && fragment.isHidden) {
-                            "performance".logD("MainActivity slidingView show fragment")
+                            TAG_PREF.logD("MainActivity slidingView show fragment")
                             supportFragmentManager.beginTransaction()
                                 .setReorderingAllowed(true)
                                 .show(fragment)
@@ -171,12 +172,12 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     PanelState.COLLAPSED -> {
-                        "performance".logD("MainActivity slidingView hide fragment")
+                        TAG_PREF.logD("MainActivity slidingView hide fragment")
                         supportFragmentManager.beginTransaction()
                             .setReorderingAllowed(true)
                             .hide(fragment)
                             .commit()
-                        "performance".logD("MainActivity slidingView hide panel")
+                        TAG_PREF.logD("MainActivity slidingView hide panel")
                         viewModel.panelShow()
                     }
 
@@ -188,7 +189,7 @@ class MainActivity : AppCompatActivity() {
             binding.slidingLayout?.let {
                 if (previousSlidingViewState?.state != slidingViewState.state) {
                     if (it.panelState != slidingViewState.state) {
-                        "performance".logD("MainActivity slidingView state change")
+                        TAG_PREF.logD("MainActivity slidingView state change")
                         it.panelState = slidingViewState.state
                     }
                 }
@@ -211,7 +212,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.panel?.let { panel ->
             if (previousMainPanelState?.visible != panelState.visible) {
-                "performance".logD("MainActivity panel visible Change")
+                TAG_PREF.logD("MainActivity panel visible Change")
                 if (panelState.visible) {
                     panel.root.visibility = VISIBLE
                 } else {
@@ -220,20 +221,20 @@ class MainActivity : AppCompatActivity() {
             }
             panelState.bitmap?.let {
                 if (previousMainPanelState?.bitmap != panelState.bitmap) {
-                    "performance".logD("MainActivity panel bitmap set")
+                    TAG_PREF.logD("MainActivity panel bitmap set")
                     panel.root.findViewById<ImageView>(R.id.panel_img)
                         .setImageBitmap(it)
                 }
             }
             if (previousMainPanelState?.isPause != panelState.isPause) {
-                "performance".logD("MainActivity panel palyPause")
+                TAG_PREF.logD("MainActivity panel palyPause")
                 panel.root.findViewById<ImageButton>(R.id.panel_play_pause)
                     .setImageResource(if (panelState.isPause) R.drawable.ic_pausing else R.drawable.ic_playing)
             }
 
             if (previousMainPanelState?.songBean != panelState.songBean)
                 panelState.songBean?.let {
-                    "performance".logD("MainActivity panel setName and setAuthor")
+                    TAG_PREF.logD("MainActivity panel setName and setAuthor")
                     panel.root.findViewById<TextView>(R.id.panel_music_name).text =
                         it.songName
                     panel.root.findViewById<TextView>(R.id.panel_music_author).text =
@@ -253,7 +254,7 @@ class MainActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
-    private fun stopRefreshAndLoad() {
+    private fun stoTAG_PREFreshAndLoad() {
         if (binding.swipe.isRefreshing) {
             binding.swipe.finishRefresh()
         }

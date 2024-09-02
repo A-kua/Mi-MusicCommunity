@@ -2,9 +2,7 @@ package fan.akua.exam
 
 import android.app.Application
 import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Build
-import androidx.annotation.RequiresApi
 import com.drake.statelayout.StateConfig
 import com.tencent.mmkv.BuildConfig
 import com.tencent.mmkv.MMKV

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import fan.akua.exam.Constants.TAG_PREF
 import fan.akua.exam.R
 import fan.akua.exam.activities.main.fragments.ImageFragment
 import fan.akua.exam.activities.main.fragments.LyricFragment
@@ -94,21 +95,21 @@ class PlayerFragment : Fragment() {
     private fun parsePlayerPanelState(playerPanelState: PlayerPanelState) {
         playerPanelState.bitmap?.let {
             if (previousPlayerPanelState?.bitmap == playerPanelState.bitmap) return@let
-            "performance".logD("PlayerFragment flowView setBitmap")
+            TAG_PREF.logD("PlayerFragment flowView setBitmap")
             binding.flowView.setBitmap(it)
         }
         binding.playPause.run {
             if (playerPanelState.isPause && binding.playPause.isPlay) {
-                "performance".logD("PlayerFragment playPauseView pause")
+                TAG_PREF.logD("PlayerFragment playPauseView pause")
                 pause()
             } else if (!playerPanelState.isPause && !binding.playPause.isPlay) {
-                "performance".logD("PlayerFragment playPauseView play")
+                TAG_PREF.logD("PlayerFragment playPauseView play")
                 play()
             }
         }
         if (previousPlayerPanelState?.playMode != playerPanelState.playMode)
             binding.playType.run {
-                "performance".logD("PlayerFragment playType changeType")
+                TAG_PREF.logD("PlayerFragment playType changeType")
                 when (playerPanelState.playMode) {
                     PlayerManager.PlayMode.SINGLE_LOOP -> setImageResource(R.drawable.ic_play_type_circulation)
                     PlayerManager.PlayMode.LIST_LOOP -> setImageResource(R.drawable.ic_play_type_order)
@@ -117,7 +118,7 @@ class PlayerFragment : Fragment() {
             }
         if (previousPlayerPanelState?.songBean != playerPanelState.songBean) {
             playerPanelState.songBean?.let {
-                "performance".logD("PlayerFragment panel setName and setAuthor")
+                TAG_PREF.logD("PlayerFragment panel setName and setAuthor")
                 binding.musicName.text = it.songName
                 binding.musicAuthor.text = it.author
             }
@@ -125,17 +126,17 @@ class PlayerFragment : Fragment() {
         playerPanelState.songBean?.let {
             if (binding.like.tag == null) {
                 binding.like.tag = it.like
-                "performance".logD("PlayerFragment likeView updateLike")
+                TAG_PREF.logD("PlayerFragment likeView updateLike")
                 binding.like.setImageResource(if (it.like) R.drawable.ic_like else R.drawable.ic_unlike)
             } else if (binding.like.tag as Boolean != it.like) {
                 binding.like.tag = it.like
-                "performance".logD("PlayerFragment likeView updateLike")
+                TAG_PREF.logD("PlayerFragment likeView updateLike")
                 binding.like.setImageResource(if (it.like) R.drawable.ic_like else R.drawable.ic_unlike)
             }
         }
         if (previousPlayerPanelState?.duration != playerPanelState.duration)
             playerPanelState.duration.run {
-                "performance".logD("PlayerFragment duration update")
+                TAG_PREF.logD("PlayerFragment duration update")
                 binding.durationTime.text = formatSecondsToTime()
                 binding.progressBar.max = toInt()
             }
@@ -156,7 +157,7 @@ class PlayerFragment : Fragment() {
     private fun parsePlayerPageState(playerPageState: PlayerPageState) {
         if (previousPlayerPageState != null)
             if (previousPlayerPageState?.page == playerPageState.page) return
-        "performance".logD("PlayerPage change")
+        TAG_PREF.logD("PlayerPage change")
         when (playerPageState.page) {
             PageMode.Image -> childFragmentManager.beginTransaction()
                 .setReorderingAllowed(true)

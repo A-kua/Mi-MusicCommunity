@@ -27,15 +27,12 @@ object PlayerManager {
     private val androidMusicPlayer: IPlayer<SongBean> by lazy {
         AndroidMusicPlayer(
             errorListener = {
-                "bug9-2".logD("error")
             },
             preparedListener = { iPlayer, songBean ->
-                "bug9-2".logD("prepare")
                 if (waitForPrepare)
                     waitForPrepare = false
             },
             completionListener = {
-                "bug9-2".logD("next")
                 playNext()
             }
         )
@@ -113,7 +110,6 @@ object PlayerManager {
                 }
             else {
                 _indexFlow.value = currentList.indexOfFirst { it.id == current.id }
-                "bug9-2".logD("index ${_indexFlow.value}")
             }
         }
 
@@ -144,7 +140,6 @@ object PlayerManager {
     fun playNext() {
         when (_playMode.value) {
             PlayMode.SINGLE_LOOP -> {
-                "bug9-2".logD("single loop ")
                 singleLoopPlay(_indexFlow.value)
             }
 
@@ -154,7 +149,6 @@ object PlayerManager {
             }
 
             PlayMode.RANDOM -> {
-                "bug9-2".logD("random  ")
                 _playList.value?.let { playlist ->
                     if (playlist.size >= 2) {
                         val randomNumber = if (playlist.size == 2) {
@@ -202,7 +196,6 @@ object PlayerManager {
             _indexFlow.value = index
             _currentSong.value = it
             androidMusicPlayer.setBean(song)
-            "bug9-2".logD("song ${song.songName}")
             waitForPrepare = true
 
             // 如果有当前请求，取消它

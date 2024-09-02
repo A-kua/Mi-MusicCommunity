@@ -1,7 +1,7 @@
 package fan.akua.exam.player
 
-import TimerManager
 import android.media.MediaPlayer
+import fan.akua.exam.Constants.TAG_PLAYER
 import fan.akua.exam.data.SongBean
 import fan.akua.exam.misc.utils.logD
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +28,7 @@ class AndroidMusicPlayer(
     private fun resetState(mediaPlayer: MediaPlayer) {
         mediaPlayer.apply {
             reset()
-            "bug9-2".logD("reset")
+            TAG_PLAYER.logD("reset")
             setOnPreparedListener {
                 preparedListener?.invoke(this@AndroidMusicPlayer, _songFlow.value)
                 if (_autoStart) this@AndroidMusicPlayer.start()
@@ -49,7 +49,7 @@ class AndroidMusicPlayer(
                     0 -> "No additional information"
                     else -> "Additional error info: $extra"
                 }
-                "bug9-2".logD("$errorMessage - $extraMessage")
+                TAG_PLAYER.logD("$errorMessage - $extraMessage")
 
                 errorListener?.invoke(this@AndroidMusicPlayer)
                 _pauseFlow.value = true
@@ -79,7 +79,6 @@ class AndroidMusicPlayer(
     override var autoStart = _autoStart
 
     override fun setBean(bean: SongBean) {
-        "bug9-2".logD("setBean $bean")
         _songFlow.value = bean
         _pauseFlow.value = true
         _currentProgressFlow.value = 0
