@@ -5,10 +5,6 @@
     android:id="@+id/parentCardView"
     android:layout_width="match_parent"
     android:layout_height="120dp"
-    android:layout_margin="4dp"
-    android:layout_marginStart="12dp"
-    android:layout_marginEnd="12dp"
-    android:padding="6dp"
     app:cardCornerRadius="20dp"
     app:cardElevation="0dp">
 

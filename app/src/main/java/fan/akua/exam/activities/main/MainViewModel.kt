@@ -137,7 +137,7 @@ class MainViewModel : ViewModel() {
             }
         }
         viewModelScope.launch {
-            AppState.closePlayerPageIntent.collect { clickMusic ->
+            AppState.closePlayerPageIntent.collect { closePage ->
                 val updatedSlidingViewState = SlidingViewState(state = PanelState.COLLAPSED)
                 _uiState.value = _uiState.value.copy(slidingViewState = updatedSlidingViewState)
             }

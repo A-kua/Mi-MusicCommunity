@@ -1,49 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:elevation="0dp"
-    android:gravity="bottom"
-    app:umanoPanelHeight="74dp">
+    android:layout_height="match_parent">
 
-    <com.drake.statelayout.StateLayout
-        android:id="@+id/state"
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activities.main.MainActivity">
+        android:elevation="0dp"
+        android:gravity="bottom"
+        app:umanoPanelHeight="74dp">
 
-        <com.scwang.smart.refresh.layout.SmartRefreshLayout
-            android:id="@+id/swipe"
+        <com.drake.statelayout.StateLayout
+            android:id="@+id/state"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true">
+            tools:context=".activities.main.MainActivity">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv"
+            <com.scwang.smart.refresh.layout.SmartRefreshLayout
+                android:id="@+id/swipe"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+        </com.drake.statelayout.StateLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentHost"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
-    </com.drake.statelayout.StateLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <include
+                android:id="@+id/panel"
+                layout="@layout/layout_panel" />
+        </FrameLayout>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentHost"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
-        <include
-            android:id="@+id/panel"
-            layout="@layout/layout_panel" />
-    </FrameLayout>
 
-</com.sothree.slidinguppanel.SlidingUpPanelLayout>
-
+</LinearLayout>
 
 
 

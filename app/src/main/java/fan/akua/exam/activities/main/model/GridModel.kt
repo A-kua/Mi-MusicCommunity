@@ -18,9 +18,14 @@ class GridModel(val musicInfo: MusicInfo, val spanCount: Int) : ItemBind {
     override fun onBind(vh: BindingAdapter.BindingViewHolder) {
         val binding = ItemTypeGridBinding.bind(vh.itemView)
 
+        // 170dp 120dp
         if (spanCount == 2) {
             val layoutParams = binding.parentCardView.layoutParams
             layoutParams.height = 170.dp(vh.context).toInt()
+            binding.parentCardView.layoutParams = layoutParams
+        } else {
+            val layoutParams = binding.parentCardView.layoutParams
+            layoutParams.height = 120.dp(vh.context).toInt()
             binding.parentCardView.layoutParams = layoutParams
         }
         Glide.with(binding.img)

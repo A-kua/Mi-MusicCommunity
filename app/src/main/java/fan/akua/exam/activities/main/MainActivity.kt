@@ -35,8 +35,10 @@ import fan.akua.exam.misc.anims.AkuaItemAnimation
 import fan.akua.exam.databinding.ActivityMainBinding
 import fan.akua.exam.activities.main.fragments.player.PlayerFragment
 import fan.akua.exam.data.MusicInfo
+import fan.akua.exam.misc.GridItemDecoration
 import fan.akua.exam.misc.utils.akuaEdgeToEdge
 import fan.akua.exam.misc.utils.areListsEqual
+import fan.akua.exam.misc.utils.dp
 import kotlinx.coroutines.launch
 
 /**
@@ -121,7 +123,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val toRVModels = recyclerViewState.toRVModels(resources = resources)
-        binding.rv.bindingAdapter.setDifferModels(toRVModels,false)
+        binding.rv.bindingAdapter.setDifferModels(toRVModels, false)
         stopRefreshAndLoad()
         binding.state.showContent()
         previousRecyclerViewState = recyclerViewState
@@ -134,9 +136,37 @@ class MainActivity : AppCompatActivity() {
     private fun parseSlidingViewState(slidingViewState: SlidingViewState) {
         if (previousSlidingViewState != null)
             if (previousSlidingViewState == slidingViewState) return
-        if (binding.slidingLayout.panelState != slidingViewState.state) {
-            binding.slidingLayout.panelState = slidingViewState.state
+        if (binding.slidingLayout == null) {
+            when (slidingViewState.state) {
+                PanelState.EXPANDED -> {
+                    if (fragment.isAdded && fragment.isHidden) {
+                        supportFragmentManager.beginTransaction()
+                            .setReorderingAllowed(true)
+                            .show(fragment)
+                            .commit()
+                    }
+                    viewModel.panelHide()
+                }
+
+                PanelState.COLLAPSED -> {
+                    supportFragmentManager.beginTransaction()
+                        .setReorderingAllowed(true)
+                        .hide(fragment)
+                        .commit()
+                    viewModel.panelShow()
+                }
+
+                PanelState.ANCHORED, PanelState.HIDDEN, PanelState.DRAGGING -> {}
+            }
+
+        } else {
+            binding.slidingLayout?.let {
+                if (it.panelState != slidingViewState.state) {
+                    it.panelState = slidingViewState.state
+                }
+            }
         }
+
         previousSlidingViewState = slidingViewState
     }
 
@@ -145,36 +175,41 @@ class MainActivity : AppCompatActivity() {
      */
     private var previousMainPanelState: MainPanelState? = null
     private fun parseMainPanelState(panelState: MainPanelState) {
+        if (binding.panel == null) return
         if (previousMainPanelState != null)
             if (previousMainPanelState == panelState) return
 
-        if (panelState.visible) {
-            binding.panel.root.visibility = VISIBLE
-        } else {
-            binding.panel.root.visibility = INVISIBLE
-        }
+        binding.panel?.let { panel ->
+            if (panelState.visible) {
+                panel.root.visibility = VISIBLE
+            } else {
+                panel.root.visibility = INVISIBLE
+            }
 
-        panelState.bitmap?.let {
-            binding.panel.root.findViewById<ImageView>(R.id.panel_img)
-                .setImageBitmap(it)
-        }
+            panelState.bitmap?.let {
+                panel.root.findViewById<ImageView>(R.id.panel_img)
+                    .setImageBitmap(it)
+            }
 
-        binding.panel.root.findViewById<ImageButton>(R.id.panel_play_pause)
-            .setImageResource(if (panelState.isPause) R.drawable.ic_pausing else R.drawable.ic_playing)
+            panel.root.findViewById<ImageButton>(R.id.panel_play_pause)
+                .setImageResource(if (panelState.isPause) R.drawable.ic_pausing else R.drawable.ic_playing)
 
-        panelState.songBean?.let {
-            binding.panel.root.findViewById<TextView>(R.id.panel_music_name).text =
-                it.songName
-            binding.panel.root.findViewById<TextView>(R.id.panel_music_author).text =
-                it.author
+            panelState.songBean?.let {
+                panel.root.findViewById<TextView>(R.id.panel_music_name).text =
+                    it.songName
+                panel.root.findViewById<TextView>(R.id.panel_music_author).text =
+                    it.author
+            }
         }
         previousMainPanelState = panelState
     }
 
     override fun onBackPressed() {
-        if (binding.slidingLayout.panelState == PanelState.EXPANDED) {
-            binding.slidingLayout.panelState = PanelState.COLLAPSED
-            return
+        binding.slidingLayout?.let {
+            if (it.panelState == PanelState.EXPANDED) {
+                it.panelState = PanelState.COLLAPSED
+                return
+            }
         }
         super.onBackPressed()
     }
@@ -210,6 +245,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        binding.rv.addItemDecoration(GridItemDecoration(8.dp(this).toInt()))
         // 下拉刷新，上拉加载样式
         binding.swipe.setRefreshFooter(ClassicsFooter(this))
         binding.swipe.setRefreshHeader(BezierRadarHeader(this))
@@ -217,7 +253,7 @@ class MainActivity : AppCompatActivity() {
         binding.rv.bindingAdapter.addHeader(HeaderModel(), animation = true)
         binding.rv.bindingAdapter.setAnimation(AkuaItemAnimation())
         binding.rv.bindingAdapter.animationRepeat = true
-        binding.rv.bindingAdapter.itemDifferCallback=object : ItemDifferCallback {
+        binding.rv.bindingAdapter.itemDifferCallback = object : ItemDifferCallback {
             override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
                 if (oldItem is BannerModel && newItem is BannerModel) {
                     return true
@@ -246,44 +282,48 @@ class MainActivity : AppCompatActivity() {
                 return false
             }
         }
+        if (binding.slidingLayout == null) return
+        binding.slidingLayout?.let { sliding ->
+            sliding.addPanelSlideListener(object :
+                SlidingUpPanelLayout.PanelSlideListener {
+                override fun onPanelSlide(panel: View, slideOffset: Float) {
+                    val alpha = (slideOffset * 10).coerceAtMost(1f)
+                    binding.panel?.let {
+                        it.root.alpha = 1 - alpha
+                    }
+                }
 
-        binding.slidingLayout.addPanelSlideListener(object :
-            SlidingUpPanelLayout.PanelSlideListener {
-            override fun onPanelSlide(panel: View, slideOffset: Float) {
-                val alpha = (slideOffset * 10).coerceAtMost(1f)
-                binding.panel.root.alpha = 1 - alpha
-            }
-
-            override fun onPanelStateChanged(
-                panel: View,
-                previousState: PanelState,
-                newState: PanelState
-            ) {
-                // 开始展开，则展示fragment
-                if (previousState == PanelState.COLLAPSED && newState == PanelState.DRAGGING) {
-                    if (fragment.isAdded && fragment.isHidden) {
+                override fun onPanelStateChanged(
+                    panel: View,
+                    previousState: PanelState,
+                    newState: PanelState
+                ) {
+                    // 开始展开，则展示fragment
+                    if (previousState == PanelState.COLLAPSED && newState == PanelState.DRAGGING) {
+                        if (fragment.isAdded && fragment.isHidden) {
+                            supportFragmentManager.beginTransaction()
+                                .setReorderingAllowed(true)
+                                .show(fragment)
+                                .commit()
+                        }
+                        // 全部展开，隐藏panel
+                    } else if (previousState == PanelState.DRAGGING && newState == PanelState.EXPANDED) {
+                        viewModel.panelHide()
+                        viewModel.slidingShow()
+                        // 全部收起，隐藏fragment
+                    } else if (previousState == PanelState.DRAGGING && newState == PanelState.COLLAPSED) {
                         supportFragmentManager.beginTransaction()
                             .setReorderingAllowed(true)
-                            .show(fragment)
+                            .hide(fragment)
                             .commit()
+                        viewModel.slidingHide()
+                        // 开始收起，展示panel
+                    } else if (previousState == PanelState.EXPANDED && newState == PanelState.DRAGGING) {
+                        viewModel.panelShow()
                     }
-                    // 全部展开，隐藏panel
-                } else if (previousState == PanelState.DRAGGING && newState == PanelState.EXPANDED) {
-                    viewModel.panelHide()
-                    viewModel.slidingShow()
-                    // 全部收起，隐藏fragment
-                } else if (previousState == PanelState.DRAGGING && newState == PanelState.COLLAPSED) {
-                    supportFragmentManager.beginTransaction()
-                        .setReorderingAllowed(true)
-                        .hide(fragment)
-                        .commit()
-                    viewModel.slidingHide()
-                    // 开始收起，展示panel
-                } else if (previousState == PanelState.EXPANDED && newState == PanelState.DRAGGING) {
-                    viewModel.panelShow()
                 }
-            }
-        })
+            })
+        }
     }
 
     /**

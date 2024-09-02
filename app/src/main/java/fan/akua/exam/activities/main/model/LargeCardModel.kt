@@ -33,7 +33,7 @@ class LargeCardModel(val data: HomePageInfo) : ItemBind {
         if (binding.rv.adapter != null) {
             binding.rv.bindingAdapter.setDifferModels(data.musicInfoList,false)
         } else {
-            val width = binding.root.context.resources.displayMetrics.widthPixels * 0.8
+            val width = binding.root.context.resources.displayMetrics.widthPixels * 0.816
             binding.rv.linear(RecyclerView.HORIZONTAL).setup {
                 addType<MusicInfo>(R.layout.item_largecard)
                 onCreate {

@@ -9,9 +9,7 @@
         style="@style/ItemTitleStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingTop="20dp"
-        android:paddingEnd="12dp"
-        android:paddingBottom="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp"
         tools:text="专属好歌" />
 </LinearLayout>
