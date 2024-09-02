@@ -17,11 +17,13 @@
 
 ## 技术栈
 
-太多了，比较喜欢炫技。
+太多了。
 
 ## 软件展示
 
 软件部分界面效果如下：
+
+还支持RTL模式，限于排版就不展示了。
 
 <div>
     <img src="vx_images/Screenshot_20240902_161159.png" alt="主页" width="32%">
@@ -31,4 +33,13 @@
 <div>
     <img src="vx_images/Screenshot_20240902_161504.png" alt="底部弹窗" width="32%">
     <img src="vx_images/Screenshot_20240902_161601.png" alt="横屏展示" width="64%">
+</div>
+
+## 性能展示
+
+在保证性能优良的情况下提供：爱不释手的交互设计、连贯的用户体验、横竖屏布局的无缝切换。
+
+<div>
+    <img src="vx_images/Screenshot_20240902_161845.png" alt="leakCanary" width="48%">
+    <img src="vx_images/Screenshot_20240902_163225.png" alt="HWUI" width="48%">
 </div>
