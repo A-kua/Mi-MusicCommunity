@@ -17,6 +17,8 @@ import fan.akua.exam.activities.main.RecyclerViewState
 import fan.akua.exam.activities.main.fragments.ImageFragment
 import fan.akua.exam.activities.main.fragments.LyricFragment
 import fan.akua.exam.databinding.FragmentPlayerBinding
+import fan.akua.exam.misc.anims.likeAnim
+import fan.akua.exam.misc.anims.unLikeAnim
 import fan.akua.exam.player.PlayerManager
 import fan.akua.exam.misc.utils.formatSecondsToTime
 import fan.akua.exam.misc.utils.logD
@@ -118,6 +120,7 @@ class PlayerFragment : Fragment() {
             }
         }
         playerPanelState.songBean?.let {
+            binding.like.tag = it.like
             binding.like.setImageResource(if (it.like) R.drawable.ic_like else R.drawable.ic_unlike)
         }
         if (previousPlayerPanelState?.duration != playerPanelState.duration)
@@ -199,7 +202,21 @@ class PlayerFragment : Fragment() {
             viewModel.playPause()
         }
         binding.like.setOnClickListener {
-            viewModel.like()
+            if (binding.like.tag as Boolean)
+                binding.like.unLikeAnim(
+                    onStart = {
+
+                    }, onEnd = {
+                        viewModel.like()
+                    })
+            else
+                binding.like.likeAnim(
+                    onStart = {
+                        viewModel.like()
+                    },
+                    onEnd = {
+
+                    })
         }
     }
 }
